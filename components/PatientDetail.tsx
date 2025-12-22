@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, FileText, MessageSquare, 
   CheckCircle, ChevronRight, ChevronLeft, Download,
@@ -195,6 +196,7 @@ interface PatientDetailProps {
 }
 
 export const PatientDetail: React.FC<PatientDetailProps> = ({ patient, onBack }) => {
+  const navigate = useNavigate();
   const details = getPatientDetails(patient);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
@@ -579,7 +581,10 @@ export const PatientDetail: React.FC<PatientDetailProps> = ({ patient, onBack })
              <div className="border-t border-neutral-200"></div>
 
              {/* Action Button */}
-             <button className="w-full bg-primary hover:bg-primary-hover text-white py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-xl hover:scale-105 active:scale-[0.98]">
+             <button 
+                onClick={() => navigate(`/patient/${patient.id}/assessment`)}
+                className="w-full bg-primary hover:bg-primary-hover text-white py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-xl hover:scale-105 active:scale-[0.98]"
+             >
                 <Stethoscope size={20} />
                 Start Assessment
              </button>
