@@ -1,7 +1,7 @@
 import { Diagnosis, Question } from '../types';
 
-// WebSocket endpoints
-const WS_BASE_URL = 'ws://clinic-hepa-v2-481780815788.europe-west1.run.app';
+// WebSocket endpoints - use wss:// for secure connections
+const WS_BASE_URL = 'wss://clinic-hepa-v2-481780815788.europe-west1.run.app';
 const TRANSCRIBER_URL = `${WS_BASE_URL}/ws/transcriber`;
 const SIMULATION_URL = `${WS_BASE_URL}/ws/simulation`;
 
