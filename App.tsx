@@ -6,6 +6,7 @@ import { PatientCard } from './components/PatientCard';
 import { Pagination } from './components/Pagination';
 import { PatientDetail } from './components/PatientDetail';
 import { InteractionViewExperimental } from './components/InteractionViewExperimental';
+import { DesignShowcase } from './components/DesignShowcase';
 import { MOCK_PATIENTS } from './constants';
 import { Patient } from './types';
 
@@ -146,12 +147,19 @@ const AssessmentPage: React.FC = () => {
   return <InteractionViewExperimental patient={patient} onBack={() => navigate(`/patient/${patientId}`)} />;
 };
 
+// Design Showcase Page
+const DesignShowcasePage: React.FC = () => {
+  const navigate = useNavigate();
+  return <DesignShowcase onBack={() => navigate('/')} />;
+};
+
 const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<PatientListPage />} />
       <Route path="/patient/:patientId" element={<PatientDetailPage />} />
       <Route path="/patient/:patientId/assessment" element={<AssessmentPage />} />
+      <Route path="/designs" element={<DesignShowcasePage />} />
     </Routes>
   );
 };
