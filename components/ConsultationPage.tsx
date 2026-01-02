@@ -573,6 +573,50 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
             />
           </div>
 
+          {/* Analytics Score - Show when consultation started */}
+          {hasStarted && (
+            <>
+              <div className="h-6 w-px bg-cyan-200"></div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-slate-600 uppercase tracking-wide font-semibold">Analytics</span>
+                <div className="relative w-10 h-10">
+                  <svg width="40" height="40" className="transform -rotate-90">
+                    <circle
+                      cx="20"
+                      cy="20"
+                      r="16"
+                      fill="none"
+                      stroke="#e0f2fe"
+                      strokeWidth="4"
+                    />
+                    <circle
+                      cx="20"
+                      cy="20"
+                      r="16"
+                      fill="none"
+                      stroke={analytics?.overall_score ? "#0891b2" : "#cbd5e1"}
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeDasharray={`${2 * Math.PI * 16}`}
+                      strokeDashoffset={`${2 * Math.PI * 16 * (1 - (analytics?.overall_score || 0) / 100)}`}
+                      className="transition-all duration-500"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    {analytics?.overall_score ? (
+                      <>
+                        <span className="text-xs font-bold text-slate-900">{Math.round(analytics.overall_score)}</span>
+                        <span className="text-[8px] text-slate-400">/100</span>
+                      </>
+                    ) : (
+                      <span className="text-[10px] text-slate-400">--</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
           {/* Divider */}
           <div className="h-6 w-px bg-cyan-200"></div>
 
