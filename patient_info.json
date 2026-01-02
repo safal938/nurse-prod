@@ -1,0 +1,193 @@
+{
+  "patientProfile": {
+    "id": "Unassigned",
+    "fullName": "Marcus \"Mark\" Elias Thorne",
+    "dob": "1978-08-14",
+    "age": 46,
+    "gender": "Male",
+    "occupation": "Site Foreman (Construction)",
+    "contact": {
+      "phone": "(313) 555-0822",
+      "address": "402 Industrial Pkwy, Apt 4B, Detroit, MI 48201",
+      "email": "N/A"
+    },
+    "nextOfKin": {
+      "name": "Janice Thorne",
+      "relation": "Sister",
+      "phone": "313-555-0199"
+    },
+    "insurance": {
+      "provider": "Blue Cross PPO",
+      "policyNumber": "XJ99283401",
+      "status": "Active"
+    }
+  },
+  "clinicalSummary": {
+    "chiefComplaint": "New-onset Jaundice (eyes/skin) & Severe Pruritus (itching).",
+    "hpiSummary": "46M presenting with acute jaundice noted 2 days prior to referral. Reports intense generalized itching affecting sleep. Denies abdominal pain, fever, or vomiting. History significant for recent dental abscess treated with Amoxicillin-Clavulanate (Augmentin) 3 weeks ago, and concomitant use of Tylenol PM/Extra Strength for jaw pain.",
+    "clinicalImpression": "Acute Liver Injury / Severe Hepatitis of Unknown Etiology. Differential includes Drug-Induced Liver Injury (DILI - potentially Augmentin-associated given timing and eosinophilia), Viral Hepatitis, or Autoimmune pathology.",
+    "riskFactors": [
+      "BMI 31.5 (Obese Class I)",
+      "Social Alcohol Use",
+      "Recent Antibiotic Use (Amoxicillin-Clavulanate)",
+      "Recent Analgesic Use (Acetaminophen)"
+    ],
+    "alerts": [
+      "Eosinophilia detected (Hypersensitivity marker)",
+      "Significant Transaminitis (>10x ULN)",
+      "Overt Jaundice"
+    ]
+  },
+  "encounterDetails": {
+    "lastEncounterDate": "2025-12-10",
+    "lastEncounterLocation": "Hepatology Clinic (Dr. A. Gupta)",
+    "referralSource": "Midtown Primary Care Associates (Dr. Richard Jenkins)",
+    "referralDate": "2025-11-20",
+    "status": "Under Investigation",
+    "consultant": "Dr. A. Gupta"
+  },
+  "vitals": {
+    "recordedDate": "2025-11-20",
+    "weight": "102 kg",
+    "height": "180 cm",
+    "bmi": "31.5",
+    "temp": "Afebrile",
+    "bp": "Stable (per referral)",
+    "hr": "Stable (per referral)"
+  },
+  "medications": {
+    "current": [
+      {
+        "name": "Acetaminophen (Tylenol PM / Extra Strength)",
+        "dosage": "Unknown frequency",
+        "status": "DISCONTINUED per Dr. Jenkins (Nov 20)",
+        "indication": "Jaw Pain"
+      }
+    ],
+    "recentHistory": [
+      {
+        "name": "Amoxicillin-Clavulanate (Augmentin)",
+        "dosage": "875mg BID",
+        "duration": "10 days",
+        "endDate": "Approx. 1 week prior to onset of jaundice",
+        "indication": "Dental Abscess"
+      }
+    ]
+  },
+  "investigations": {
+    "labResults": {
+      "collectionDate": "24 hours prior to Nov 20, 2025",
+      "hematology": {
+        "wbc": { "value": 11.2, "unit": "K/uL", "flag": "HIGH" },
+        "eosinophilsPct": { "value": 8.5, "unit": "%", "flag": "HIGH (Significant)" },
+        "eosinophilsAbs": { "value": 0.95, "unit": "K/uL", "flag": "HIGH" }
+      },
+      "liverFunction": {
+        "alt": { "value": 620, "unit": "U/L", "flag": "CRITICAL HIGH" },
+        "ast": { "value": 450, "unit": "U/L", "flag": "CRITICAL HIGH" },
+        "alkPhos": { "value": 188, "unit": "U/L", "flag": "HIGH" },
+        "totalBilirubin": { "value": 5.2, "unit": "mg/dL", "flag": "HIGH" },
+        "directBilirubin": { "value": 3.8, "unit": "mg/dL", "flag": "HIGH" },
+        "inr": { "value": 1.2, "unit": "ratio", "flag": "BORDERLINE HIGH" }
+      },
+      "toxicology": {
+        "acetaminophen": { "value": "< 10", "unit": "ug/mL", "flag": "Therapeutic/Neg" },
+        "ethanol": { "value": "Negative", "flag": "Normal" }
+      }
+    },
+    "imaging": {
+      "type": "US ABDOMEN COMPLETE",
+      "date": "2025-11-21 (08:15 AM)",
+      "findings": [
+        "Liver: Slightly enlarged (17.2cm), increased echotexture consistent with Moderate Hepatic Steatosis.",
+        "Biliary: CBD normal (4mm). No dilation.",
+        "Gallbladder: No gallstones (cholelithiasis) or inflammation."
+      ],
+      "impression": "Moderate hepatic steatosis. No evidence of biliary obstruction. Findings do not explain degree of cholestasis."
+    }
+  },
+  "physicalExamNotes": {
+    "general": "Alert, Overt Jaundice (Sclera and Skin).",
+    "skin": "Excoriations present on extremities (scratch marks).",
+    "abdomen": "Soft, non-tender. Mild hepatomegaly on percussion. No ascites."
+  },
+    "documents": [
+    {
+      "id": 1,
+      "title": "Hematology (CBC)",
+      "type": "report",
+      "source": "Metro Detroit Urgent Care",
+      "date": "23 Oct 2023",
+      "hasStamp": true,
+      "color": "text-blue-600",
+      "content": "labs",
+      "image": "/images/lab1.png"
+    },
+    {
+      "id": 2,
+      "title": "Blood Panel Results",
+      "type": "report",
+      "source": "Central Lab",
+      "date": "22 Oct 2023",
+      "hasStamp": true,
+      "color": "text-blue-600",
+      "content": "labs",
+      "image": "/images/lab2.png"
+    },
+    {
+      "id": 3,
+      "title": "Urgent Care Referral",
+      "type": "letter",
+      "source": "Dr. A. Gupta",
+      "date": "21 Oct 2023",
+      "hasStamp": false,
+      "color": "text-amber-600",
+      "content": "text",
+      "image": "/images/referal_letter.png"
+    },
+    {
+      "id": 4,
+      "title": "Appt. Confirmation",
+      "type": "app",
+      "source": "NHS App",
+      "date": "20 Oct 2023",
+      "hasStamp": false,
+      "color": "text-sky-600",
+      "content": "mobile",
+      "image": "/images/nhs_screenshot.png"
+    },
+    {
+      "id": 5,
+      "title": "Abdominal Ultrasound",
+      "type": "image",
+      "source": "Radiology Dept",
+      "date": "19 Oct 2023",
+      "hasStamp": true,
+      "color": "text-neutral-600",
+      "content": "image",
+      "image": "/images/radiology.png"
+    },
+    {
+      "id": 6,
+      "title": "Clinical History",
+      "type": "letter",
+      "source": "Midtown Primary",
+      "date": "18 Oct 2023",
+      "hasStamp": false,
+      "color": "text-neutral-600",
+      "content": "text",
+      "image": "/images/clinicnote1.png"
+    },
+    {
+      "id": 7,
+      "title": "Follow-up Notes",
+      "type": "letter",
+      "source": "Midtown Primary",
+      "date": "15 Oct 2023",
+      "hasStamp": false,
+      "color": "text-neutral-600",
+      "content": "text",
+      "image": "/images/clinicnote2.png"
+    }
+  ]
+}

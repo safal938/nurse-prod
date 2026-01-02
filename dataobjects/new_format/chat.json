@@ -1,0 +1,34 @@
+[
+  {
+    "role": "Nurse",
+    "message": "Hello, Mr. Thorne, I'm nurse Sarah. I understand you were referred from urgent care. What brings you in today?",
+    "highlights": []
+  },
+  {
+    "role": "Patient",
+    "message": "I'm turning yellow. My sister. Saw it first said, I looked like a giant lemon and this itching, it's unreal. Feels like there are ants under my skin. I haven't slept in two nights. I'm worried. It's my liver.",
+    "highlights": [
+      "yellow",
+      "itching",
+      "ants under my skin",
+      "two nights",
+      "liver"
+    ]
+  },
+  {
+    "role": "Patient",
+    "message": "I have to go to work.",
+    "highlights": []
+  },
+  {
+    "role": "Nurse",
+    "message": "I'm sorry to hear your feeling that way. Have you had any nausea vomiting or pain in your upper right side since starting your recent medications?",
+    "highlights": [
+      "nausea",
+      "vomiting",
+      "pain",
+      "upper right side",
+      "medications"
+    ]
+  }
+]

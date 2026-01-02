@@ -1,0 +1,66 @@
+{
+    "type": "diagnosis",
+    "diagnosis": [
+        {
+            "did": "A1B2C",
+            "diagnosis": "Acute Cholestatic Hepatitis secondary to Amoxicillin-Clavulanate",
+            "indicators_point": [
+                "Patient reports yellowing of the eyes (jaundice).",
+                "Patient reports generalized itching (pruritus).",
+                "Patient reports a dull ache under the ribs (RUQ pain).",
+                "Patient reports significant fatigue.",
+                "Elevated AST (450 U/L), ALT (620 U/L), and Alk Phos (180 U/L).",
+                "Elevated Total Bilirubin (5.2 mg/dL).",
+                "Recent prescription of Amoxicillin-Clavulanate 3 weeks ago.",
+                "Patient reports taking 'Tylenol PM' and 'Extra Strength Tylenol' frequently for lingering jaw pain."
+            ],
+            "reasoning": "The patient presents with overt jaundice, pruritus, RUQ discomfort, and fatigue, along with significantly elevated LFTs including a cholestatic pattern (elevated Alk Phos relative to transaminases). The recent use of Amoxicillin-Clavulanate (a known cause of drug-induced liver injury, particularly cholestatic patterns) 3 weeks prior to symptom onset strongly suggests a drug-induced hepatitis. The frequent use of acetaminophen for pain is also noted and could contribute to liver burden.",
+            "followup_question": "Have you noticed any changes in the color of your urine (darker) or stool (lighter) recently?",
+            "rank": 1,
+            "severity": "Moderate"
+        },
+        {
+            "did": "D3E4F",
+            "diagnosis": "Acute Jaundice of Unknown Etiology",
+            "indicators_point": [
+                "Patient reports yellowing of the eyes (jaundice).",
+                "Patient reports generalized itching (pruritus).",
+                "Patient reports a dull ache under the ribs (RUQ pain).",
+                "Patient reports significant fatigue.",
+                "Elevated AST (450 U/L), ALT (620 U/L), Alk Phos (180 U/L), and Total Bilirubin (5.2 mg/dL).",
+                "INR is borderline (1.2)."
+            ],
+            "reasoning": "The patient exhibits signs and symptoms of jaundice and elevated liver enzymes, with a cholestatic pattern. While drug-induced liver injury is a strong possibility, this diagnosis acknowledges the need to rule out other causes of biliary obstruction or dysfunction, especially given the relatively preserved INR. The new indicators reinforce the cholestatic presentation and add fatigue and RUQ pain.",
+            "followup_question": "Have you had any recent travel, exposure to new people, or engaged in any activities that might put you at risk for viral hepatitis?",
+            "rank": 2,
+            "severity": "Moderate"
+        },
+        {
+            "did": "G5H6I",
+            "diagnosis": "Dental Abscess (Resolved) with Residual Inflammation",
+            "indicators_point": [
+                "History of dental abscess treated 3 weeks ago",
+                "Lingering jaw pain",
+                "Prescribed Amoxicillin-Clavulanate for 10 days",
+                "Patient reports taking 'Tylenol PM' and 'Extra Strength Tylenol' frequently for lingering jaw pain."
+            ],
+            "reasoning": "The patient had a dental abscess treated recently, which explains the initial need for antibiotics and the lingering jaw pain. While the abscess itself may be resolved, the pain suggests ongoing inflammation or complications, potentially contributing to the patient's overall discomfort and medication use. The frequent use of acetaminophen for pain is noted.",
+            "followup_question": "On a scale of 0 to 10, how severe is your jaw pain currently, and does it radiate anywhere else in your face or head?",
+            "rank": 3,
+            "severity": "Low"
+        },
+        {
+            "did": "J7K8L",
+            "diagnosis": "Acetaminophen Overuse secondary to Chronic Pain (Chronic)",
+            "indicators_point": [
+                "Reports taking 'Tylenol PM' and 'Extra Strength Tylenol' frequently for lingering jaw pain",
+                "Recent dental abscess treated 3 weeks ago"
+            ],
+            "reasoning": "The patient admits to frequent use of Tylenol (acetaminophen) products for ongoing jaw pain, which is a chronic issue. While the current acute presentation is likely drug-induced liver injury from Augmentin, chronic overuse of acetaminophen can also contribute to liver damage or mask underlying issues.",
+            "followup_question": "Can you estimate how many Extra Strength Tylenol pills you take in a typical day, and how often you take Tylenol PM?",
+            "rank": 4,
+            "severity": "Very Low"
+        }
+    ],
+    "source": "logic_check"
+}

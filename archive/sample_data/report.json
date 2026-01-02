@@ -1,0 +1,26 @@
+{
+    "type": "report", 
+    "data": {
+  "clinical_handover": {
+    "hpi_narrative": "Patient presents with a 3-day history of painless jaundice and generalized severe pruritus. Symptoms emerged approximately 3 weeks after completing a course of Amoxicillin-Clavulanate for a dental infection. Patient reports associated fatigue and unquantified weight loss ('clothes feel looser'), but denies nausea, vomiting, or abdominal pain. There is no history of alcohol abuse or recent travel, though frequent use of Acetaminophen for lingering jaw pain is noted.",
+    "key_biomarkers_extracted": [
+      "Total Bilirubin 5.2 mg/dL",
+      "AST 450 U/L",
+      "ALT 620 U/L",
+      "Alk Phos 180 U/L",
+      "INR 1.2"
+    ],
+    "clinical_impression_summary": "Suspected Acute Cholestatic Hepatitis secondary to drug-induced liver injury (Amoxicillin-Clavulanate), compounded by potential acetaminophen toxicity. Severity is Moderate.",
+    "suggested_doctor_actions": [
+      "Perform abdominal palpation to assess for hepatomegaly or RUQ tenderness.",
+      "Order abdominal ultrasound to rule out biliary obstruction.",
+      "Obtain Viral Hepatitis serologies (A, B, C) to rule out viral causes.",
+      "Advise immediate discontinuation of all acetaminophen products."
+    ]
+  },
+  "audit_summary": {
+    "performance_narrative": "The nurse demonstrated high empathy (Score: 8/10), effectively validating the patient's distress regarding the pruritus ('ants under skin'). Communication was generally clear with minimal jargon, though the specific term 'RUQ' caused minor confusion. The session was somewhat nurse-dominated (70% talk ratio), occasionally rushing the patient's answers regarding symptom onset.",
+    "areas_for_improvement_summary": "Focus on active listening by increasing the pause time after patient responses to encourage fuller disclosure. Simplify anatomical terms (e.g., use 'under your right ribs' instead of 'RUQ') to improve patient comprehension."
+  }
+}
+    }

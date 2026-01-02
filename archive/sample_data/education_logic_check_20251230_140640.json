@@ -1,0 +1,38 @@
+{
+    "type": "education",
+    "data": [
+        {
+            "headline": "Initial Assessment",
+            "content": "Further questions will be asked to gather a complete picture of your health condition.",
+            "category": "Next Steps",
+            "urgency": "Low",
+            "context_reference": "Hello, I'm nurse Sarah. I have some basic information about you, but we'll need to go over some further questions to get a more complete picture of your health condition. What can I help you with today?",
+            "status": "asked"
+        },
+        {
+            "headline": "Jaundice and Itching",
+            "content": "Yellowing of the skin and severe itching are symptoms that require immediate medical evaluation to determine the cause.",
+            "category": "Safety",
+            "urgency": "High",
+            "context_reference": "I'm yellow. And this itching is driving. Me nuts. Feels like there are ants under my skin. What's going on? Am I dying?",
+            "status": "asked"
+        },
+        {
+            "headline": "Symptom Reassurance",
+            "content": "While concerning, yellowing of the skin and itching do not automatically mean you are dying.",
+            "category": "Reassurance",
+            "urgency": "Low",
+            "context_reference": "I'm yellow. And this itching is driving. Me nuts. Feels like there are ants under my skin. What's going on? Am I dying?",
+            "status": "pending"
+        },
+        {
+            "headline": "Symptom Assessment",
+            "content": "The presence of fever, chills, or right upper quadrant abdominal pain alongside jaundice and itching requires prompt medical evaluation.",
+            "category": "Safety",
+            "urgency": "High",
+            "context_reference": "I'm yellow. And this itching is driving. Me nuts. Feels like there are ants under my skin. What's going on? Am I dying?",
+            "status": "asked"
+        }
+    ],
+    "source": "logic_check"
+}

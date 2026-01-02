@@ -1,0 +1,40 @@
+{
+    "type": "checklist",
+    "data": [
+  {
+    "point": "Established rapport and introduced role",
+    "checked": true,
+    "reasoning": "Nurse clearly stated at the start: 'Hello, I'm nurse Sarah. I have some basic information about you...'"
+  },
+  {
+    "point": "Assessed chronological link to medication",
+    "checked": true,
+    "reasoning": "Nurse specifically asked about symptoms during the antibiotic course: 'Did you experience any nausea... while you were taking the Amoxicillin-Clavulanate?'"
+  },
+  {
+    "point": "Screened for alcohol consumption",
+    "checked": false,
+    "reasoning": "No questions were found in the transcript regarding alcohol intake, which is a critical differential for liver dysfunction."
+  },
+  {
+    "point": "Assessed location and quality of pain",
+    "checked": true,
+    "reasoning": "Nurse asked about 'right upper quadrant abdominal pain', confirming the location of the dull ache."
+  },
+  {
+    "point": "Checked for viral hepatitis risk factors (Travel/Contacts)",
+    "checked": false,
+    "reasoning": "The nurse failed to ask about recent travel history or exposure to others with jaundice/hepatitis."
+  },
+  {
+    "point": "Evaluated hydration status",
+    "checked": false,
+    "reasoning": "Although patient mentioned 'not eating much', the nurse did not follow up with specific questions about fluid intake or urine output."
+  },
+  {
+    "point": "Provided immediate safety advice",
+    "checked": true,
+    "reasoning": "Nurse correctly flagged the urgency: 'Yellowing of the skin and severe itching are symptoms that require immediate medical evaluation.'"
+  }
+]
+    }

@@ -1,0 +1,8 @@
+{
+    "type": "status",
+    "data": {
+        "end": false,
+        "state": "mid"
+    },
+    "source": "logic_check"
+}

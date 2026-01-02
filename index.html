@@ -56,6 +56,33 @@
         font-feature-settings: "tnum";
         background-color: #ffffff; /* Global background */
       }
+      
+      /* Hide scrollbar by default, show on hover */
+      .scrollbar-hover::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      .scrollbar-hover::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .scrollbar-hover::-webkit-scrollbar-thumb {
+        background: transparent;
+        border-radius: 3px;
+      }
+      .scrollbar-hover:hover::-webkit-scrollbar-thumb {
+        background: #d4d4d4;
+      }
+      .scrollbar-hover:hover::-webkit-scrollbar-thumb:hover {
+        background: #a3a3a3;
+      }
+      /* Firefox */
+      .scrollbar-hover {
+        scrollbar-width: thin;
+        scrollbar-color: transparent transparent;
+      }
+      .scrollbar-hover:hover {
+        scrollbar-color: #d4d4d4 transparent;
+      }
     </style>
   <script type="importmap">
 {

@@ -1,0 +1,30 @@
+{
+    "type": "chat",
+    "data": [
+        {
+            "role": "Nurse",
+            "message": "Hello, I'm nurse Sarah. I have some basic information about you, but we'll need to go over some further questions to get a more complete picture of your health condition. What can I help you with today?"
+        },
+        {
+            "role": "Patient",
+            "message": "I'm yellow. And this itching is driving. Me nuts. Feels like there are ants under my skin. What's going on? Am I dying?"
+        },
+        {
+            "role": "Nurse",
+            "message": "I understand your feeling yellow and that the itching is bothering. You have you experienced any fever chills or right? Upper quadrant abdominal pain with the Johns and itching."
+        },
+        {
+            "role": "Patient",
+            "message": "Yeah, I got this dull ache under my ribs. Not sharp just heavy. And I'm really tired how to leave work early yesterday. What about the itching? Can you give me something for that right away?"
+        },
+        {
+            "role": "Nurse",
+            "message": "Thank you for telling me about the ache and the tiredness. Can you describe the itching? Is it worse at certain times of the day or after eating?"
+        },
+        {
+            "role": "Patient",
+            "message": "It's all the time mostly on my arms and chest. Nothing makes it better. Can I get us something to make it? Stop?"
+        }
+    ],
+    "source": "logic_loop"
+}

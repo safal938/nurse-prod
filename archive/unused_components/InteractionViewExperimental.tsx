@@ -21,12 +21,12 @@ interface TranscriptEntry {
 
 const mapQuestionToCardData = (q: Question): QuestionCardData => {
   let status: 'answered' | 'pending' | 'urgent' = 'pending';
-  if (q.answer) {
+  if (q.status === 'asked' && q.answer) {
     status = 'answered';
-  } else if (q.rank === 1 || q.rank === 2) {
+  } else if (q.rank <= 2 && q.rank !== 999) {
     status = 'urgent';
   }
-  return { id: q.qid, status, question: q.content, answer: q.answer || undefined, rank: q.rank };
+  return { id: q.qid, status, headline: q.headline, question: q.content, answer: q.answer || undefined, rank: q.rank };
 };
 
 export const InteractionViewExperimental: React.FC<InteractionViewExperimentalProps> = ({ patient, onBack }) => {
@@ -129,29 +129,17 @@ export const InteractionViewExperimental: React.FC<InteractionViewExperimentalPr
               <div className="flex items-center gap-2 text-[11px] text-neutral-400">
                 <span className="font-mono">P{patient.id}</span>
                 <span>·</span>
-                <span className="uppercase tracking-wider font-medium text-primary">Live Interaction</span>
+                <span className="uppercase tracking-wider font-medium text-neutral-500">Live Interaction</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Connection Status */}
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium ${
-              isConnected ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-              connectionStatus === 'connecting' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-              'bg-neutral-50 text-neutral-500 border border-neutral-200'
-            }`}>
-              {isConnected ? <Wifi size={14} /> : <WifiOff size={14} />}
-              {connectionStatus === 'connecting' ? 'Connecting...' : 
-               isConnected ? 'Connected' : 
-               connectionStatus === 'error' ? 'Error' : 'Offline'}
-            </div>
-
             {/* Start/Stop Button */}
             {isIdle || connectionStatus === 'disconnected' || connectionStatus === 'error' ? (
               <button 
                 onClick={startSession}
-                className="flex items-center gap-2 px-4 py-1.5 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-1.5 bg-neutral-100 text-neutral-600 border border-neutral-200 rounded-md hover:bg-neutral-200 transition-colors text-sm font-medium"
               >
                 <Play size={14} />
                 Start Session
@@ -159,7 +147,7 @@ export const InteractionViewExperimental: React.FC<InteractionViewExperimentalPr
             ) : (
               <button 
                 onClick={stopSession}
-                className="flex items-center gap-2 px-4 py-1.5 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-1.5 bg-neutral-100 text-neutral-600 border border-neutral-200 rounded-md hover:bg-neutral-200 transition-colors text-sm font-medium"
               >
                 <Square size={14} />
                 Stop
@@ -167,7 +155,7 @@ export const InteractionViewExperimental: React.FC<InteractionViewExperimentalPr
             )}
 
             {isSessionComplete && (
-              <span className="px-3 py-1 rounded border border-emerald-200 bg-emerald-50 text-emerald-600 text-[11px] font-bold uppercase tracking-wider">
+              <span className="px-3 py-1 rounded border border-neutral-300 bg-neutral-100 text-neutral-600 text-[11px] font-medium uppercase tracking-wider">
                 Complete
               </span>
             )}
@@ -176,17 +164,13 @@ export const InteractionViewExperimental: React.FC<InteractionViewExperimentalPr
               onClick={() => setShowDebugPanel(!showDebugPanel)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                 showDebugPanel 
-                  ? 'bg-purple-100 text-purple-700 border border-purple-200' 
+                  ? 'bg-neutral-200 text-neutral-700 border border-neutral-300' 
                   : 'bg-neutral-50 text-neutral-500 border border-neutral-200 hover:bg-neutral-100'
               }`}
             >
               <Bug size={14} />
               Debug
             </button>
-
-            <span className="px-3 py-1 rounded border border-red-200 bg-red-50 text-red-600 text-[11px] font-bold uppercase tracking-wider">
-              Critical
-            </span>
           </div>
         </div>
       </div>
@@ -261,18 +245,7 @@ export const InteractionViewExperimental: React.FC<InteractionViewExperimentalPr
                 </div>
               </div>
 
-              <div>
-                <h3 className="text-[11px] text-neutral-400 uppercase tracking-wider font-medium mb-3">Session Log</h3>
-                <div className="bg-slate-900 rounded-lg p-3 max-h-40 overflow-y-auto font-mono text-[10px]">
-                  {logs.length > 0 ? logs.map((log, i) => (
-                    <div key={i} className={`mb-1 ${log.type === 'error' ? 'text-red-400' : log.type === 'success' ? 'text-emerald-400' : 'text-sky-400'}`}>
-                      <span className="text-slate-500">[{log.time}]</span> {log.message}
-                    </div>
-                  )) : (
-                    <div className="text-slate-500">Waiting for session...</div>
-                  )}
-                </div>
-              </div>
+            
             </div>
           </div>
         </motion.div>

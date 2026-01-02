@@ -1,0 +1,38 @@
+{
+    "type": "analytics",
+    "data": {
+        "overall_score": 75,
+        "metrics": {
+            "empathy": {
+                "score": 8,
+                "reasoning": "The nurse validated the patient's feelings by acknowledging their symptoms and distress. The phrase 'I understand your feeling yellow and that the itching is bothering you' shows direct acknowledgment.",
+                "example_quote": "I understand your feeling yellow and that the itching is bothering you."
+            },
+            "clarity": {
+                "score": 9,
+                "reasoning": "The nurse used clear, understandable language. Medical jargon was minimal and appropriate for the context.",
+                "feedback": "Continue using plain language and explaining any medical terms if they arise."
+            },
+            "information_gathering": {
+                "score": 7,
+                "reasoning": "The nurse asked relevant follow-up questions about the patient's symptoms (fever, chills, pain) and then probed further into the nature of the itching. However, the initial question about 'right upper quadrant abdominal pain' could be simplified or explained."
+            },
+            "patient_engagement": {
+                "score": 7,
+                "turn_taking_ratio": "70% Nurse / 30% Patient"
+            }
+        },
+        "key_strengths": [
+            "Demonstrated empathy by validating patient's feelings.",
+            "Used clear and understandable language.",
+            "Asked relevant follow-up questions to gather more information."
+        ],
+        "improvement_areas": [
+            "Increase patient's turn to speak to foster more engagement.",
+            "Consider simplifying medical terminology or providing brief explanations.",
+            "Explore the patient's concerns about 'dying' more directly to address their anxiety."
+        ],
+        "sentiment_trend": "Anxious to Slightly Concerned but Engaged"
+    },
+    "source": "logic_loop"
+}

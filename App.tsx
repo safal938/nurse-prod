@@ -4,9 +4,7 @@ import { Search } from 'lucide-react';
 import { Header } from './components/Header';
 import { PatientCard } from './components/PatientCard';
 import { Pagination } from './components/Pagination';
-import { PatientDetail } from './components/PatientDetail';
-import { InteractionViewExperimental } from './components/InteractionViewExperimental';
-import { DesignShowcase } from './components/DesignShowcase';
+import { ConsultationPage } from './components/ConsultationPage';
 import { MOCK_PATIENTS } from './constants';
 import { Patient } from './types';
 
@@ -42,7 +40,8 @@ const PatientListPage: React.FC = () => {
   }, [searchQuery]);
 
   const handlePatientSelect = (patient: Patient) => {
-    navigate(`/patient/${patient.id}`);
+    // Navigate to consultation page with patient ID
+    navigate(`/consultation/${patient.id}`);
   };
 
   const handlePageChange = (page: number) => {
@@ -111,8 +110,8 @@ const PatientListPage: React.FC = () => {
   );
 };
 
-// Patient Detail Page Wrapper
-const PatientDetailPage: React.FC = () => {
+// Consultation Page Wrapper
+const ConsultationPageWrapper: React.FC = () => {
   const { patientId } = useParams<{ patientId: string }>();
   const navigate = useNavigate();
 
@@ -120,46 +119,28 @@ const PatientDetailPage: React.FC = () => {
 
   if (!patient) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-neutral-600">Patient not found</p>
+      <div className="min-h-screen flex items-center justify-center bg-neutral-100">
+        <div className="text-center">
+          <p className="text-neutral-600 mb-4">Patient not found</p>
+          <button
+            onClick={() => navigate('/')}
+            className="px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition-colors"
+          >
+            Back to Patient List
+          </button>
+        </div>
       </div>
     );
   }
 
-  return <PatientDetail patient={patient} onBack={() => navigate('/')} />;
-};
-
-// Assessment Page Wrapper
-const AssessmentPage: React.FC = () => {
-  const { patientId } = useParams<{ patientId: string }>();
-  const navigate = useNavigate();
-
-  const patient = MOCK_PATIENTS.find((p) => p.id === patientId);
-
-  if (!patient) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-neutral-600">Patient not found</p>
-      </div>
-    );
-  }
-
-  return <InteractionViewExperimental patient={patient} onBack={() => navigate(`/patient/${patientId}`)} />;
-};
-
-// Design Showcase Page
-const DesignShowcasePage: React.FC = () => {
-  const navigate = useNavigate();
-  return <DesignShowcase onBack={() => navigate('/')} />;
+  return <ConsultationPage patient={patient} onBack={() => navigate('/')} />;
 };
 
 const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<PatientListPage />} />
-      <Route path="/patient/:patientId" element={<PatientDetailPage />} />
-      <Route path="/patient/:patientId/assessment" element={<AssessmentPage />} />
-      <Route path="/designs" element={<DesignShowcasePage />} />
+      <Route path="/consultation/:patientId" element={<ConsultationPageWrapper />} />
     </Routes>
   );
 };

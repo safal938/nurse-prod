@@ -1,6 +1,7 @@
 [
   {
     "did": "A1B2C",
+    "shortName": "DILI (Drug-Induced)",
     "diagnosis": "Drug-Induced Liver Injury secondary to Amoxicillin-Clavulanate and Acetaminophen (Acute)",
     "indicators_point": [
       "Patient reports yellow eyes (jaundice).",
@@ -18,6 +19,7 @@
   },
   {
     "did": "D3E4F",
+    "shortName": "Cholestasis",
     "diagnosis": "Cholestasis secondary to Hepatotoxicity (Acute)",
     "indicators_point": [
       "Patient reports yellow eyes (jaundice).",
