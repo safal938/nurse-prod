@@ -8,7 +8,9 @@ import {
   CheckSquare, 
   FileText,
   MoveLeftIcon,
-  BarChart3
+  BarChart3,
+  Bug,
+  X
 } from 'lucide-react';
 import { PatientInfo } from './PatientInfo';
 import { ChatInterface } from './ChatInterface';
@@ -190,6 +192,10 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
   const [hasStarted, setHasStarted] = useState(false);
   const [showConsultationModal, setShowConsultationModal] = useState(false);
 
+  // Debug modal state
+  const [showDebugModal, setShowDebugModal] = useState(false);
+  const [debugLogs, setDebugLogs] = useState<Array<{ timestamp: string; type: string; data: any }>>([]);
+
   // Calculate dynamic counts from backend data
   const totalQuestions = questions.length;
   const answeredQuestions = questions.filter(q => q.status === "asked").length;
@@ -260,6 +266,11 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
     }
   };
 
+  const addDebugLog = (type: string, data: any) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setDebugLogs(prev => [...prev, { timestamp, type, data }].slice(-50)); // Keep last 50 logs
+  };
+
   const startClinicalSession = (patientId: string, gender: string) => {
     if (sessionRef.current) {
       console.log('Session already active');
@@ -267,48 +278,59 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
     }
 
     console.log('Starting clinical session for patient:', patientId);
+    addDebugLog('system', { message: 'Starting clinical session', patientId, gender });
     
     const session = new ClinicalSession(patientId, gender, {
       onChat: (messages) => {
         console.log('Received chat messages:', messages.length);
         setChatMessages(messages);
+        addDebugLog('chat', { count: messages.length, data: messages });
       },
       onDiagnoses: (newDiagnoses) => {
         console.log('Received diagnoses:', newDiagnoses.length);
         setDiagnoses(newDiagnoses);
+        addDebugLog('diagnosis', { count: newDiagnoses.length, data: newDiagnoses });
       },
       onQuestions: (newQuestions) => {
         console.log('Received questions:', newQuestions.length);
         setQuestions(newQuestions);
+        addDebugLog('questions', { count: newQuestions.length, data: newQuestions });
       },
       onEducation: (items) => {
         console.log('Received education items:', items.length);
         setEducationItems(items);
+        addDebugLog('education', { count: items.length, data: items });
       },
       onAnalytics: (analyticsData) => {
         console.log('Received analytics data');
         setAnalytics(analyticsData);
+        addDebugLog('analytics', analyticsData);
       },
       onChecklist: (items) => {
         console.log('Received checklist items:', items.length);
         setChecklistItems(items);
+        addDebugLog('checklist', { count: items.length, data: items });
       },
       onReport: (report) => {
         console.log('Received report data');
         setReportData(report);
+        addDebugLog('report', report);
       },
       onStatusChange: (status) => {
         console.log('Session status:', status);
         setIsSessionActive(status === 'connected');
+        addDebugLog('status', { status });
       },
       onLog: (message, type) => {
         console.log(`[${type}] ${message}`);
+        addDebugLog('log', { message, level: type });
       },
     });
 
     sessionRef.current = session;
     session.start().catch((error) => {
       console.error('Failed to start session:', error);
+      addDebugLog('error', { message: 'Failed to start session', error: error.message });
       sessionRef.current = null;
     });
   };
@@ -325,6 +347,141 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
 
   return (
     <div className="h-screen bg-neutral-100 flex flex-col overflow-hidden font-sans text-neutral-800">
+      {/* Debug Modal */}
+      {showDebugModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-gray-900 rounded-lg shadow-2xl w-full max-w-6xl mx-4 h-[80vh] flex flex-col border border-gray-700 overflow-hidden">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-700 flex items-center justify-between bg-gray-800 shrink-0">
+              <div className="flex items-center gap-3">
+                <Bug size={20} className="text-cyan-500" />
+                <h2 className="text-lg font-bold text-white">WebSocket Debug Console</h2>
+                <span className="text-xs text-gray-400 font-mono">Real-time Data Stream</span>
+              </div>
+              <button
+                onClick={() => setShowDebugModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Connection Status */}
+            <div className="px-6 py-3 border-b border-gray-700 flex gap-4 bg-gray-850 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${isSessionActive ? 'bg-green-500 animate-pulse' : 'bg-gray-600'}`}></div>
+                <span className="text-xs font-mono text-gray-300">
+                  Session: <span className={isSessionActive ? 'text-green-400' : 'text-gray-500'}>{isSessionActive ? 'ACTIVE' : 'INACTIVE'}</span>
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono text-gray-400">Logs: {debugLogs.length}</span>
+              </div>
+              <button
+                onClick={() => setDebugLogs([])}
+                className="ml-auto text-xs text-gray-400 hover:text-white transition-colors"
+              >
+                Clear Logs
+              </button>
+            </div>
+
+            {/* Data Grid */}
+            <div className="flex-1 overflow-auto p-4">
+              <div className="grid grid-cols-4 gap-3">
+                {/* Chat */}
+                <div className="flex flex-col h-[280px]">
+                  <div className="text-xs font-bold text-purple-400 mb-2 uppercase tracking-wide">● Chat ({chatMessages.length})</div>
+                  <div className="flex-1 bg-black rounded-lg border border-gray-800 overflow-y-auto">
+                    <pre className="text-[10px] text-green-400 p-3 leading-tight font-mono whitespace-pre-wrap break-words">
+                      {chatMessages.length > 0 ? JSON.stringify(chatMessages, null, 2) : 'Waiting...'}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Diagnosis */}
+                <div className="flex flex-col h-[280px]">
+                  <div className="text-xs font-bold text-blue-400 mb-2 uppercase tracking-wide">● Diagnosis ({diagnoses.length})</div>
+                  <div className="flex-1 bg-black rounded-lg border border-gray-800 overflow-y-auto">
+                    <pre className="text-[10px] text-green-400 p-3 leading-tight font-mono whitespace-pre-wrap break-words">
+                      {diagnoses.length > 0 ? JSON.stringify(diagnoses, null, 2) : 'Waiting...'}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Questions */}
+                <div className="flex flex-col h-[280px]">
+                  <div className="text-xs font-bold text-yellow-400 mb-2 uppercase tracking-wide">● Questions ({questions.length})</div>
+                  <div className="flex-1 bg-black rounded-lg border border-gray-800 overflow-y-auto">
+                    <pre className="text-[10px] text-green-400 p-3 leading-tight font-mono whitespace-pre-wrap break-words">
+                      {questions.length > 0 ? JSON.stringify(questions, null, 2) : 'Waiting...'}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Education */}
+                <div className="flex flex-col h-[280px]">
+                  <div className="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-wide">● Education ({educationItems.length})</div>
+                  <div className="flex-1 bg-black rounded-lg border border-gray-800 overflow-y-auto">
+                    <pre className="text-[10px] text-green-400 p-3 leading-tight font-mono whitespace-pre-wrap break-words">
+                      {educationItems.length > 0 ? JSON.stringify(educationItems, null, 2) : 'Waiting...'}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Analytics */}
+                <div className="flex flex-col h-[280px]">
+                  <div className="text-xs font-bold text-pink-400 mb-2 uppercase tracking-wide">● Analytics</div>
+                  <div className="flex-1 bg-black rounded-lg border border-gray-800 overflow-y-auto">
+                    <pre className="text-[10px] text-green-400 p-3 leading-tight font-mono whitespace-pre-wrap break-words">
+                      {analytics ? JSON.stringify(analytics, null, 2) : 'Waiting...'}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Checklist */}
+                <div className="flex flex-col h-[280px]">
+                  <div className="text-xs font-bold text-orange-400 mb-2 uppercase tracking-wide">● Checklist ({checklistItems.length})</div>
+                  <div className="flex-1 bg-black rounded-lg border border-gray-800 overflow-y-auto">
+                    <pre className="text-[10px] text-green-400 p-3 leading-tight font-mono whitespace-pre-wrap break-words">
+                      {checklistItems.length > 0 ? JSON.stringify(checklistItems, null, 2) : 'Waiting...'}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Report */}
+                <div className="flex flex-col h-[280px]">
+                  <div className="text-xs font-bold text-red-400 mb-2 uppercase tracking-wide">● Report</div>
+                  <div className="flex-1 bg-black rounded-lg border border-gray-800 overflow-y-auto">
+                    <pre className="text-[10px] text-green-400 p-3 leading-tight font-mono whitespace-pre-wrap break-words">
+                      {reportData ? JSON.stringify(reportData, null, 2) : 'Waiting...'}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Event Log */}
+                <div className="flex flex-col h-[280px]">
+                  <div className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">● Event Log</div>
+                  <div className="flex-1 bg-black rounded-lg border border-gray-800 overflow-y-auto">
+                    <div className="text-[10px] text-green-400 p-3 leading-tight font-mono space-y-1">
+                      {debugLogs.length > 0 ? (
+                        debugLogs.slice().reverse().map((log, idx) => (
+                          <div key={idx} className="border-b border-gray-800 pb-1 mb-1">
+                            <div className="text-cyan-400">[{log.timestamp}] {log.type}</div>
+                            <div className="text-gray-500 text-[9px] ml-2 break-all">{JSON.stringify(log.data).substring(0, 100)}...</div>
+                          </div>
+                        ))
+                      ) : (
+                        'Waiting...'
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Combined Nav + Analytics Bar */}
       <div className="h-12 bg-white border-b border-gray-200 shrink-0 px-4 flex items-center shadow-sm">
         {/* Back Button */}
@@ -333,6 +490,15 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
           className="flex items-center gap-1.5 text-slate-500 hover:text-cyan-600 transition-colors mr-3"
         >
           <MoveLeftIcon size={18} />
+        </button>
+        
+        {/* Debug Button */}
+        <button
+          onClick={() => setShowDebugModal(true)}
+          className="flex items-center gap-1.5 text-slate-500 hover:text-cyan-600 transition-colors mr-3"
+          title="Open Debug Console"
+        >
+          <Bug size={18} />
         </button>
         
         {/* Vertical Separator */}
