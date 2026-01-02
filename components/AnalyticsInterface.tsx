@@ -91,7 +91,11 @@ const MetricCard: React.FC<MetricCardProps> = ({
         {/* Title and Info */}
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold text-neutral-900 mb-1">{title}</h3>
-          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-sky-100 text-sky-700`}>
+          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+            score >= 80 ? 'bg-sky-100 text-sky-700' : 
+            score >= 60 ? 'bg-orange-100 text-orange-700' : 
+            'bg-red-100 text-red-700'
+          }`}>
             {score >= 80 ? <TrendingUp size={10} /> : score >= 60 ? <Minus size={10} /> : <TrendingDown size={10} />}
             {score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : 'Needs Improvement'}
           </div>
@@ -141,7 +145,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
               <div className="bg-neutral-50 rounded-lg p-2.5 border border-neutral-200">
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <ThumbsUp size={11} className="text-neutral-500" />
-                  <span className="text-[10px] font-semibold text-neutral-600 uppercase tracking-wide">What Went Well</span>
+                  <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wide">What Went Well</span>
                 </div>
                 <p className="text-[11px] text-neutral-700 leading-relaxed">{pros}</p>
               </div>
@@ -152,7 +156,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
               <div className="bg-neutral-50 rounded-lg p-2.5 border border-neutral-200">
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <ThumbsDown size={11} className="text-neutral-500" />
-                  <span className="text-[10px] font-semibold text-neutral-600 uppercase tracking-wide">What Didn't Go Well</span>
+                  <span className="text-[10px] font-semibold text-red-600 uppercase tracking-wide">What Didn't Go Well</span>
                 </div>
                 <p className="text-[11px] text-neutral-700 leading-relaxed">{cons}</p>
               </div>
@@ -165,26 +169,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
 };
 
 export const AnalyticsInterface: React.FC<{ analyticsData?: AnalyticsData | null }> = ({ analyticsData: externalAnalytics = null }) => {
-  
-  if (!externalAnalytics) {
-    return (
-      <div className="h-full flex items-center justify-center bg-white rounded-xl border border-neutral-200 shadow-sm">
-        <div className="text-center max-w-md px-8">
-          <div className="w-20 h-20 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <BarChart3 size={40} className="text-cyan-400 animate-pulse" />
-          </div>
-          <h2 className="text-xl font-semibold text-neutral-800 mb-3">
-            Analyzing Consultation Performance
-          </h2>
-          <p className="text-sm text-neutral-600 leading-relaxed">
-            AI is evaluating communication quality, empathy, clarity, and patient engagement metrics...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const analytics = externalAnalytics;
+  // Use backend data immediately, fall back to dummy data if no external data or incomplete data
+  const analytics = (externalAnalytics && externalAnalytics.metrics) ? externalAnalytics : BACKEND_ANALYTICS;
   
   return (
     <div className="h-full overflow-y-auto">

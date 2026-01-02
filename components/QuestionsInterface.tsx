@@ -134,7 +134,14 @@ const mapQuestionToCardData = (q: Question): QuestionCardData => {
 };
 
 export const QuestionsInterface: React.FC<{ questions?: Question[] }> = ({ questions: externalQuestions = [] }) => {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  // Use backend data immediately, fall back to dummy data if no external data
+  const [questions, setQuestions] = useState<Question[]>(BACKEND_QUESTIONS);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Track mount state to disable initial animations
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Update when external questions change
   useEffect(() => {
@@ -147,25 +154,6 @@ export const QuestionsInterface: React.FC<{ questions?: Question[] }> = ({ quest
     // This would be handled by backend updates
     console.log('Mark as answered:', questionId);
   };
-
-  // Show loading state if no questions yet
-  if (questions.length === 0) {
-    return (
-      <div className="h-full flex items-center justify-center bg-white rounded-xl border border-neutral-200 shadow-sm">
-        <div className="text-center max-w-md px-8">
-          <div className="w-20 h-20 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Circle size={40} className="text-cyan-400 animate-pulse" />
-          </div>
-          <h2 className="text-xl font-semibold text-neutral-800 mb-3">
-            Analyzing Patient Information
-          </h2>
-          <p className="text-sm text-neutral-600 leading-relaxed">
-            AI is processing the consultation data to generate relevant clinical questions...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   const questionCards = questions.map(mapQuestionToCardData);
   const unansweredQuestions = questionCards.filter(q => q.status !== 'answered').sort((a, b) => a.rank - b.rank);
@@ -188,22 +176,34 @@ export const QuestionsInterface: React.FC<{ questions?: Question[] }> = ({ quest
           {/* Urgent Questions - Full Width */}
           {urgentQuestions.length > 0 && (
             <div className="space-y-3 mb-4">
-              <AnimatePresence mode="popLayout">
-                {urgentQuestions.map((q) => (
+              {isMounted ? (
+                <AnimatePresence mode="popLayout">
+                  {urgentQuestions.map((q) => (
+                    <QuestionCard key={q.id} data={q} />
+                  ))}
+                </AnimatePresence>
+              ) : (
+                urgentQuestions.map((q) => (
                   <QuestionCard key={q.id} data={q} />
-                ))}
-              </AnimatePresence>
+                ))
+              )}
             </div>
           )}
 
           {/* Regular Pending Questions - 2 Column Grid */}
           {regularPendingQuestions.length > 0 && (
             <div className="grid grid-cols-2 gap-3">
-              <AnimatePresence mode="popLayout">
-                {regularPendingQuestions.map((q) => (
+              {isMounted ? (
+                <AnimatePresence mode="popLayout">
+                  {regularPendingQuestions.map((q) => (
+                    <QuestionCard key={q.id} data={q} />
+                  ))}
+                </AnimatePresence>
+              ) : (
+                regularPendingQuestions.map((q) => (
                   <QuestionCard key={q.id} data={q} />
-                ))}
-              </AnimatePresence>
+                ))
+              )}
             </div>
           )}
 
@@ -235,11 +235,17 @@ export const QuestionsInterface: React.FC<{ questions?: Question[] }> = ({ quest
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          <AnimatePresence mode="popLayout">
-            {answeredQuestions.map((q) => (
+          {isMounted ? (
+            <AnimatePresence mode="popLayout">
+              {answeredQuestions.map((q) => (
+                <QuestionCard key={q.id} data={q} />
+              ))}
+            </AnimatePresence>
+          ) : (
+            answeredQuestions.map((q) => (
               <QuestionCard key={q.id} data={q} />
-            ))}
-          </AnimatePresence>
+            ))
+          )}
 
           {answeredQuestions.length === 0 && (
             <div className="flex items-center justify-center h-full text-center py-12">

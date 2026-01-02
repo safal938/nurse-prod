@@ -60,11 +60,11 @@ const EducationCard: React.FC<EducationCardProps> = ({ item }) => {
   const isHighUrgency = item.urgency === 'High';
   const isDelivered = item.status === 'asked';
   
-  const containerClasses = isHighUrgency
+  const containerClasses = (isHighUrgency && !isDelivered)
     ? "bg-red-50 border-red-200 shadow-[0_0_0_1px_rgba(254,202,202,0.4)]"
     : "bg-neutral-50 border-neutral-200 hover:border-neutral-300";
 
-  const innerCardClasses = isHighUrgency ? "border-red-100 shadow-sm" : "border-neutral-100 shadow-sm";
+  const innerCardClasses = (isHighUrgency && !isDelivered) ? "border-red-100 shadow-sm" : "border-neutral-100 shadow-sm";
   
   return (
     <div
@@ -74,7 +74,7 @@ const EducationCard: React.FC<EducationCardProps> = ({ item }) => {
       <div className={`bg-white rounded-lg p-3 border relative z-10 transition-colors ${innerCardClasses}`}>
         <div className="flex items-center justify-between gap-2 mb-2">
           <span className={`text-[8px] font-medium uppercase tracking-wide ${
-            isHighUrgency ? 'text-red-400' : 'text-neutral-400'
+            (isHighUrgency && !isDelivered) ? 'text-red-400' : 'text-neutral-400'
           }`}>
             {item.category}
           </span>
@@ -85,14 +85,14 @@ const EducationCard: React.FC<EducationCardProps> = ({ item }) => {
           )}
         </div>
         <h3 className={`font-semibold mb-2 ${
-          isHighUrgency ? 'text-black' : 'text-neutral-900'
+          (isHighUrgency && !isDelivered) ? 'text-black' : 'text-neutral-900'
         } ${
           isDelivered ? 'text-[10px]' : 'text-[15px]'
         }`}>
           {item.headline}
         </h3>
         <p className={`leading-relaxed ${
-          isHighUrgency ? 'text-red-800' : 'text-neutral-600'
+          (isHighUrgency && !isDelivered) ? 'text-red-800' : 'text-neutral-600'
         } ${
           isDelivered ? 'text-[9px]' : 'text-xs'
         }`}>
@@ -127,7 +127,8 @@ const EducationCard: React.FC<EducationCardProps> = ({ item }) => {
 };
 
 export const PatientEducationInterface: React.FC<{ educationItems?: EducationItem[] }> = ({ educationItems: externalItems = [] }) => {
-  const [items, setItems] = useState<EducationItem[]>([]);
+  // Use backend data immediately, fall back to dummy data if no external data
+  const [items, setItems] = useState<EducationItem[]>(BACKEND_EDUCATION_ITEMS);
 
   // Update when external items change
   useEffect(() => {
@@ -135,25 +136,6 @@ export const PatientEducationInterface: React.FC<{ educationItems?: EducationIte
       setItems(externalItems);
     }
   }, [externalItems]);
-
-  // Show loading state if no items yet
-  if (items.length === 0) {
-    return (
-      <div className="h-full flex items-center justify-center bg-white rounded-xl border border-neutral-200 shadow-sm">
-        <div className="text-center max-w-md px-8">
-          <div className="w-20 h-20 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <BookOpen size={40} className="text-cyan-400 animate-pulse" />
-          </div>
-          <h2 className="text-xl font-semibold text-neutral-800 mb-3">
-            Preparing Patient Education
-          </h2>
-          <p className="text-sm text-neutral-600 leading-relaxed">
-            AI is generating personalized education materials based on the diagnosis and patient needs...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   const pendingItems = items.filter(item => item.status === 'pending');
   const deliveredItems = items.filter(item => item.status === 'asked');

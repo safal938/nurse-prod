@@ -18,19 +18,28 @@ interface QuestionCardProps {
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({ data, isHighlighted = false }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  
   const isAnswered = data.status === 'answered';
   const isUrgent = data.status === 'urgent';
 
-  const containerClasses = isUrgent
+  // Mark as animated after first render
+  React.useEffect(() => {
+    const timer = setTimeout(() => setHasAnimated(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const containerClasses = (isUrgent && !isAnswered)
     ? "bg-red-50 border-red-200 shadow-[0_0_0_1px_rgba(254,202,202,0.4)]"
     : "bg-neutral-50 border-neutral-200 hover:border-neutral-300";
 
-  const innerCardClasses = isUrgent ? "border-red-100 shadow-sm" : "border-neutral-100 shadow-sm";
+  const innerCardClasses = (isUrgent && !isAnswered) ? "border-red-100 shadow-sm" : "border-neutral-100 shadow-sm";
 
   return (
     <motion.div 
-      layout
+      layout={hasAnimated}
       layoutId={`question-${data.id}`}
+      initial={false}
       animate={{ 
         opacity: 1, 
         scale: isHighlighted ? 1.02 : 1, 
@@ -38,19 +47,29 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ data, isHighlighted 
         boxShadow: isHighlighted ? '0 0 0 2px rgba(14, 165, 233, 0.5)' : 'none'
       }}
       exit={{ opacity: 0, scale: 0.8 }}
-      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      transition={hasAnimated ? { type: "spring", stiffness: 500, damping: 30 } : { duration: 0 }}
       onClick={() => setIsOpen(!isOpen)}
-      className={`rounded-xl p-2 border cursor-pointer group select-none relative overflow-hidden ${containerClasses}`}
+      className={`rounded-xl ${
+                isAnswered ? 'p-1.5' : 'p-2'
+              }  border cursor-pointer group select-none relative overflow-hidden ${containerClasses}`}
     >
-       <div className={`bg-white rounded-lg p-3 border relative z-10 transition-colors ${innerCardClasses}`}>
+       <div className={`bg-white rounded-lg ${
+                isAnswered ? 'p-2' : 'p-3'
+              }  border relative z-10 transition-colors ${innerCardClasses}`}>
           <div className="flex justify-between items-start gap-3">
-            <h2 className={`leading-tight mb-1 ${
-              isUrgent ? 'text-black' : 'text-neutral-900'
-            } ${
-              isAnswered ? 'text-[10px]' : 'text-[15px] font-semibold '
-            }`}>
-              {data.headline}
-            </h2>
+            <div className="flex-1 min-w-0">
+              <h2 className={`leading-tight ${
+                (isUrgent && !isAnswered) ? 'text-black' : 'text-neutral-900'
+              } ${
+                isAnswered ? 'text-[11px]' : 'text-[15px] font-semibold mb-1'
+              }`}>
+                {data.headline}
+              </h2>
+              <p className={`leading-snug pt-2 ${(isUrgent && !isAnswered) ? 'text-red-800' : 'text-neutral-600'} ${
+                  isAnswered ? 'text-[10px]' : 'text-xs'}`}>
+                {data.question}
+              </p>
+            </div>
             <div className="flex flex-col items-center shrink-0 min-h-[1.5rem]">
               {isAnswered && (
                 <>
@@ -65,10 +84,6 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ data, isHighlighted 
               {!isAnswered && !isUrgent && <HelpCircle size={16} className="text-neutral-300" />}
             </div>
           </div>
-          <p className={`leading-snug ${isUrgent ? 'text-red-800' : 'text-neutral-600'} ${
-              isAnswered ? 'text-[9px]' : 'text-xs'}`}>
-            {data.question}
-          </p>
        </div>
        {isUrgent && !isAnswered && (
          <div className="px-3 py-0.5">

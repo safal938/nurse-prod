@@ -341,7 +341,7 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
         {/* Voice Consultation Status - Always visible when active */}
         {hasStarted && (
           <>
-            <div className="flex items-center gap-2 mr-4">
+            <div className="flex items-center gap-2 mr-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                 isSessionActive ? 'bg-[#0EA5E9] animate-pulse' : 'bg-neutral-300'
               }`}>
@@ -357,6 +357,22 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
                 </span>
                 <span className="text-[8px] text-slate-500">Voice Active</span>
               </div>
+              {/* Stop Button */}
+              <button
+                onClick={() => {
+                  if (sessionRef.current) {
+                    sessionRef.current.stop();
+                    sessionRef.current = null;
+                  }
+                  setIsSessionActive(false);
+                }}
+                className="ml-1 w-6 h-6 rounded flex items-center justify-center bg-cyan-500/50 hover:bg-cyan-600 transition-colors"
+                title="Stop consultation"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
+                  <rect x="6" y="6" width="12" height="12" />
+                </svg>
+              </button>
             </div>
             <div className="h-6 w-px bg-cyan-200 mr-4"></div>
           </>
@@ -449,18 +465,119 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
               onMicClick={handleMicClick}
               onModalClose={() => setShowConsultationModal(false)}
             />
+          ) : !hasStarted ? (
+            // Show "Please Start Consultation" for all tabs except Patient and Chat
+            <div className="h-full flex items-center justify-center">
+              <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center max-w-md">
+                <div className="w-16 h-16 rounded-full bg-cyan-50 flex items-center justify-center mx-auto mb-4">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0891b2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" x2="12" y1="19" y2="22"/>
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-neutral-700 mb-2">Start Consultation</h3>
+                <p className="text-sm text-neutral-500">
+                  Please start the consultation from the Chat tab to view {activeSection} data
+                </p>
+              </div>
+            </div>
           ) : activeSection === 'questions' ? (
-            <QuestionsInterface questions={questions} />
+            questions.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center max-w-md">
+                  <div className="w-16 h-16 rounded-full bg-cyan-50 flex items-center justify-center mx-auto mb-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600"></div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-neutral-700 mb-2">Analyzing Consultation</h3>
+                  <p className="text-sm text-neutral-500">
+                    Waiting for consultation data to present questions
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <QuestionsInterface questions={questions} />
+            )
           ) : activeSection === 'education' ? (
-            <PatientEducationInterface educationItems={educationItems} />
+            educationItems.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center max-w-md">
+                  <div className="w-16 h-16 rounded-full bg-cyan-50 flex items-center justify-center mx-auto mb-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600"></div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-neutral-700 mb-2">Analyzing Consultation</h3>
+                  <p className="text-sm text-neutral-500">
+                    Waiting for consultation data to present patient education
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <PatientEducationInterface educationItems={educationItems} />
+            )
           ) : activeSection === 'diagnostic' ? (
-            <DiagnosticInterface diagnoses={diagnoses} />
+            diagnoses.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center max-w-md">
+                  <div className="w-16 h-16 rounded-full bg-cyan-50 flex items-center justify-center mx-auto mb-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600"></div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-neutral-700 mb-2">Analyzing Consultation</h3>
+                  <p className="text-sm text-neutral-500">
+                    Waiting for consultation data to present diagnostic information
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <DiagnosticInterface diagnoses={diagnoses} />
+            )
           ) : activeSection === 'checklist' ? (
-            <ChecklistInterface checklistItems={checklistItems} />
+            checklistItems.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center max-w-md">
+                  <div className="w-16 h-16 rounded-full bg-cyan-50 flex items-center justify-center mx-auto mb-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600"></div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-neutral-700 mb-2">Analyzing Consultation</h3>
+                  <p className="text-sm text-neutral-500">
+                    Waiting for consultation data to present checklist
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <ChecklistInterface checklistItems={checklistItems} />
+            )
           ) : activeSection === 'analytics' ? (
-            <AnalyticsInterface analyticsData={analytics} />
+            !analytics || !analytics.metrics ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center max-w-md">
+                  <div className="w-16 h-16 rounded-full bg-cyan-50 flex items-center justify-center mx-auto mb-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600"></div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-neutral-700 mb-2">Analyzing Consultation</h3>
+                  <p className="text-sm text-neutral-500">
+                    Waiting for consultation data to present analytics
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <AnalyticsInterface analyticsData={analytics} />
+            )
           ) : activeSection === 'report' ? (
-            <ReportInterface reportData={reportData} />
+            !reportData ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center max-w-md">
+                  <div className="w-16 h-16 rounded-full bg-cyan-50 flex items-center justify-center mx-auto mb-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-600"></div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-neutral-700 mb-2">Analyzing Consultation</h3>
+                  <p className="text-sm text-neutral-500">
+                    Waiting for consultation data to generate report
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <ReportInterface reportData={reportData} />
+            )
           ) : (
             <div className="h-full overflow-y-auto">
               <div className="bg-white rounded-xl border border-neutral-200 p-8">

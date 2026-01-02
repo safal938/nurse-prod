@@ -5,6 +5,7 @@ import { Header } from './components/Header';
 import { PatientCard } from './components/PatientCard';
 import { Pagination } from './components/Pagination';
 import { ConsultationPage } from './components/ConsultationPage';
+import { ConsultationPageShowcase } from './components/ConsultationPageShowcase';
 import { MOCK_PATIENTS } from './constants';
 import { Patient } from './types';
 
@@ -136,11 +137,18 @@ const ConsultationPageWrapper: React.FC = () => {
   return <ConsultationPage patient={patient} onBack={() => navigate('/')} />;
 };
 
+// Consultation Showcase Wrapper (Static Demo)
+const ConsultationShowcaseWrapper: React.FC = () => {
+  const navigate = useNavigate();
+  return <ConsultationPageShowcase onBack={() => navigate('/')} />;
+};
+
 const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<PatientListPage />} />
       <Route path="/consultation/:patientId" element={<ConsultationPageWrapper />} />
+      <Route path="/consultation-showcase" element={<ConsultationShowcaseWrapper />} />
     </Routes>
   );
 };

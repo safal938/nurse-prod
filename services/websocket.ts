@@ -3,6 +3,7 @@ import { Diagnosis, Question, ChatMessage, EducationItem, AnalyticsData, Checkli
 // WebSocket endpoints - use wss:// for secure connections
 const WS_BASE_URL = 'wss://clinic-hepa-v2-481780815788.europe-west1.run.app';
 const TRANSCRIBER_URL = `${WS_BASE_URL}/ws/transcriber`;
+const SIMULATION_URL = `${WS_BASE_URL}/ws/simulation`;
 
 // Message types from backend
 export interface ChatMessageData {
@@ -213,7 +214,7 @@ export class ClinicalSession {
 
   private startSimulation() {
     // Start simulation connection after initial analysis
-    this.simulationSocket = new WebSocket(TRANSCRIBER_URL);
+    this.simulationSocket = new WebSocket(SIMULATION_URL);
     this.simulationSocket.binaryType = 'arraybuffer';
 
     this.simulationSocket.onopen = () => {

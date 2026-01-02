@@ -17,8 +17,9 @@ const getShortName = (headline: string): string => {
 };
 
 export const DiagnosticInterface: React.FC<{ diagnoses?: Diagnosis[] }> = ({ diagnoses: externalDiagnoses = [] }) => {
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
-  const [selectedDiagnosis, setSelectedDiagnosis] = useState<Diagnosis | null>(null);
+  // Use backend data immediately, fall back to dummy data if no external data
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>(BACKEND_DIAGNOSES);
+  const [selectedDiagnosis, setSelectedDiagnosis] = useState<Diagnosis | null>(BACKEND_DIAGNOSES[0] || null);
 
   // Update diagnoses when external data changes
   useEffect(() => {
@@ -29,25 +30,6 @@ export const DiagnosticInterface: React.FC<{ diagnoses?: Diagnosis[] }> = ({ dia
       }
     }
   }, [externalDiagnoses, selectedDiagnosis]);
-
-  // Show loading state if no diagnoses yet
-  if (diagnoses.length === 0) {
-    return (
-      <div className="h-full flex items-center justify-center bg-white rounded-xl border border-neutral-200 shadow-sm">
-        <div className="text-center max-w-md px-8">
-          <div className="w-20 h-20 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Brain size={40} className="text-cyan-400 animate-pulse" />
-          </div>
-          <h2 className="text-xl font-semibold text-neutral-800 mb-3">
-            Generating Differential Diagnoses
-          </h2>
-          <p className="text-sm text-neutral-600 leading-relaxed">
-            AI is analyzing symptoms, biomarkers, and clinical data to generate possible diagnoses...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (!selectedDiagnosis) {
     return null;

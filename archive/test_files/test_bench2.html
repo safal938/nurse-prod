@@ -196,7 +196,7 @@
 
         function connectSimulation() {
             document.getElementById('systemState').innerText = "Simulation: Connecting Voice...";
-            simSocket = new WebSocket('wss://clinic-hepa-v2-481780815788.europe-west1.run.app/ws/transcriber');
+            simSocket = new WebSocket('wss://clinic-hepa-v2-481780815788.europe-west1.run.app/ws/simulation');
             
             simSocket.onopen = () => {
                 updateStatus('sim', 'STREAMING', 'bg-green-500', 'text-green-500');

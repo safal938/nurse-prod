@@ -133,40 +133,23 @@ const DonutChart: React.FC<DonutChartProps> = ({ completed, total, size = 120, s
 };
 
 export const ChecklistInterface: React.FC<{ checklistItems?: ChecklistItem[] }> = ({ checklistItems: externalItems = [] }) => {
-  const [items, setItems] = useState<ChecklistItem[]>([]);
+  // Use mock data immediately, fall back to dummy data if no external data
+  const [items, setItems] = useState<ChecklistItem[]>(MOCK_CHECKLIST_ITEMS);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const [currentCategory, setCurrentCategory] = useState<string>('');
+  const initialCategory = Array.from(new Set(MOCK_CHECKLIST_ITEMS.map(item => item.category)))[0] || '';
+  const [currentCategory, setCurrentCategory] = useState<string>(initialCategory);
 
   // Update when external items change
   useEffect(() => {
     if (externalItems.length > 0) {
       setItems(externalItems);
       // Set first category
-      const categories = Array.from(new Set(externalItems.map(item => item.category)));
-      if (categories.length > 0 && !currentCategory) {
-        setCurrentCategory(categories[0]);
+      const newCategories = Array.from(new Set(externalItems.map(item => item.category)));
+      if (newCategories.length > 0 && !currentCategory) {
+        setCurrentCategory(newCategories[0]);
       }
     }
   }, [externalItems, currentCategory]);
-
-  // Show loading state if no items yet
-  if (items.length === 0) {
-    return (
-      <div className="h-full flex items-center justify-center bg-neutral-50">
-        <div className="text-center max-w-md px-8">
-          <div className="w-20 h-20 bg-cyan-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Check size={40} className="text-cyan-400 animate-pulse" />
-          </div>
-          <h2 className="text-xl font-semibold text-neutral-800 mb-3">
-            Generating Safety Checklist
-          </h2>
-          <p className="text-sm text-neutral-600 leading-relaxed">
-            AI is creating a comprehensive safety and compliance checklist for this consultation...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   // Get unique categories from items
   const categories = Array.from(new Set(items.map(item => item.category)));

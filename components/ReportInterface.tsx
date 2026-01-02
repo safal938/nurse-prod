@@ -211,30 +211,12 @@ export const ReportInterface: React.FC<{ reportData?: ReportData | null }> = ({ 
     }, 1500);
   };
 
-  if (!reportGenerated && !externalReportData) {
-    return (
-      <div className="h-full flex flex-col bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
-        {/* Initial State - Generate Button or Waiting */}
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="text-center max-w-md">
-            <div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <FileText size={40} className="text-neutral-400" />
-            </div>
-            <h2 className="text-xl font-semibold text-neutral-800 mb-3">
-              Clinical Consultation Report
-            </h2>
-            <p className="text-sm text-neutral-600 mb-8 leading-relaxed">
-              The comprehensive clinical report will be generated automatically once the consultation is complete.
-            </p>
-            <div className="flex items-center justify-center gap-2 text-cyan-600">
-              <Loader2 size={20} className="animate-spin" />
-              <span className="text-sm font-medium">Waiting for consultation data...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Show dummy report immediately instead of loading state
+  React.useEffect(() => {
+    if (!reportGenerated && !externalReportData) {
+      setReportGenerated(true);
+    }
+  }, [reportGenerated, externalReportData]);
 
   return (
     <div className="h-full flex flex-col bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
