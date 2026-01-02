@@ -138,11 +138,11 @@ export const DiagnosticInterface: React.FC<{ diagnoses?: Diagnosis[] }> = ({ dia
       {/* Right Column - Detail View (60%) */}
       <div className="flex-[3] bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-neutral-200 bg-neutral-50 shrink-0 flex items-center justify-between">
+        <div className="px-4 py-1.5 border-b border-neutral-200 bg-neutral-50 shrink-0 flex items-center justify-between">
           <h3 className="text-xs font-semibold text-neutral-800 flex items-center gap-2">
             More Information on Diagnosis 
           </h3>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border border-neutral-200 rounded-lg text-xs font-medium transition-colors">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border border-neutral-200 rounded-lg text-[10px] font-medium transition-colors">
             <Play size={12} />
             Run Diagnostic
           </button>
@@ -191,38 +191,35 @@ export const DiagnosticInterface: React.FC<{ diagnoses?: Diagnosis[] }> = ({ dia
                   </p>
                 </div>
               </div>
-              <div className="space-y-2">
-                {selectedDiagnosis.indicators_point.map((indicator, idx) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className={`flex items-start gap-2 p-2.5 rounded-lg border ${
-                      indicator.check 
-                        ? 'bg-neutral-50 border-neutral-200' 
-                        : 'bg-neutral-50 border-neutral-200'
-                    }`}
-                  >
-                    <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                      indicator.check 
-                        ? 'bg-emerald-500' 
-                        : 'bg-neutral-300'
-                    }`}>
-                      {indicator.check ? (
-                        <CheckCircle2 size={10} className="text-white" strokeWidth={3} />
-                      ) : (
-                        <X size={10} className="text-white" strokeWidth={3} />
-                      )}
-                    </div>
-                    <span className={`text-xs leading-relaxed ${
-                      indicator.check ? 'text-emerald-900 font-medium' : 'text-neutral-500'
-                    }`}>
-                      {indicator.criteria}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
+             <div className="grid grid-cols-2 gap-2">
+  {selectedDiagnosis.indicators_point.map((indicator, idx) => (
+    <motion.div 
+      key={idx}
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: idx * 0.05 }}
+      className={`flex items-start gap-2 p-2.5 rounded-lg border ${
+        indicator.check ? 'bg-neutral-50 border-neutral-200' : 'bg-neutral-50 border-neutral-200'
+      }`}
+    >
+      <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+        indicator.check ? 'bg-emerald-500' : 'bg-neutral-300'
+      }`}>
+        {indicator.check ? (
+          <CheckCircle2 size={10} className="text-white" strokeWidth={3} />
+        ) : (
+          <X size={10} className="text-white" strokeWidth={3} />
+        )}
+      </div>
+      <span className={`text-xs leading-relaxed ${
+        indicator.check ? 'text-emerald-900 font-medium' : 'text-neutral-500'
+      }`}>
+        {indicator.criteria}
+      </span>
+    </motion.div>
+  ))}
+</div>
+
             </div>
 
             {/* Clinical Reasoning */}

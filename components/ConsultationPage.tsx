@@ -609,7 +609,7 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
                         <span className="text-[8px] text-slate-400">/100</span>
                       </>
                     ) : (
-                      <span className="text-[10px] text-slate-400">--</span>
+                      <span className="text-[10px] text-slate-400">-</span>
                     )}
                   </div>
                 </div>

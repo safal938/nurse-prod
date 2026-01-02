@@ -133,6 +133,14 @@ export class ClinicalSession {
   private playAndRelayAudio(buffer: ArrayBuffer) {
     if (!this.audioContext) return;
     
+    // Send to transcriber immediately for faster processing
+    if (this.transcriberSocket && this.transcriberSocket.readyState === WebSocket.OPEN) {
+      this.transcriberSocket.send(buffer);
+      this.bytesTotal += buffer.byteLength;
+      this.log(`Relayed ${this.bytesTotal.toLocaleString()} bytes total`);
+    }
+    
+    // Then handle audio playback
     const int16 = new Int16Array(buffer);
     const float32 = new Float32Array(int16.length);
     
@@ -148,20 +156,10 @@ export class ClinicalSession {
     source.connect(this.audioContext.destination);
     
     const now = this.audioContext.currentTime;
-    if (this.nextStartTime < now) this.nextStartTime = now + 0.1;
+    if (this.nextStartTime < now) this.nextStartTime = now + 0.05; // Reduced buffer from 0.1 to 0.05
     const scheduledPlayTime = this.nextStartTime;
     source.start(scheduledPlayTime);
     this.nextStartTime += audioBuf.duration;
-
-    // Delayed relay to transcriber
-    const delayMs = (scheduledPlayTime - now) * 1000;
-    setTimeout(() => {
-      if (this.transcriberSocket && this.transcriberSocket.readyState === WebSocket.OPEN) {
-        this.transcriberSocket.send(buffer);
-        this.bytesTotal += buffer.byteLength;
-        this.log(`Relayed ${this.bytesTotal.toLocaleString()} bytes total`);
-      }
-    }, delayMs);
   }
 
   async start(): Promise<void> {

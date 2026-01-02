@@ -201,46 +201,55 @@ export const ChecklistInterface: React.FC<{ checklistItems?: ChecklistItem[] }> 
         </button>
 
         {/* Main Content Box */}
-        <div className="flex-1 bg-white rounded-2xl border border-neutral-200 shadow-lg p-8">
-          {/* Header with Donut Chart */}
-          <div className="flex items-start gap-6 mb-8">
-            <DonutChart completed={completedInCategory} total={totalInCategory} size={100} strokeWidth={10} />
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-neutral-800 mb-1">
-                {currentCategory}
-              </h2>
-              <p className="text-sm text-neutral-500 mb-3">
-                {completedInCategory} of {totalInCategory} items completed
-              </p>
-              {/* Progress Bar */}
-              <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${categoryPercentage}%` }}
-                  transition={{ duration: 0.3 }}
-                  className="h-full bg-[#0EA5E9] rounded-full"
-                />
-              </div>
+        <div className="flex-1 bg-white rounded-2xl border border-neutral-200 shadow-lg overflow-hidden">
+          {/* Tab Navigation */}
+          <div className="bg-white border-b border-neutral-200 px-6 pt-6">
+            <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCurrentCategory(cat)}
+                  className={`px-4 py-2 text-[10px] whitespace-nowrap transition-all relative rounded-t-lg ${
+                    currentCategory === cat
+                      ? 'text-neutral-900 bg-neutral-50'
+                      : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50/50'
+                  }`}
+                >
+                  {cat}
+                  {currentCategory === cat && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500 rounded-t-full" />
+                  )}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Category Dots Indicator */}
-          <div className="flex items-center justify-center gap-2 mb-6">
-            {categories.map((cat, idx) => (
-              <button
-                key={cat}
-                onClick={() => setCurrentCategory(cat)}
-                className={`h-1.5 rounded-full transition-all ${
-                  idx === currentCategoryIndex
-                    ? 'w-8 bg-cyan-500'
-                    : 'w-1.5 bg-neutral-300 hover:bg-neutral-400'
-                }`}
-              />
-            ))}
-          </div>
+          {/* Content Area */}
+          <div className="p-8">
+            {/* Header with Donut Chart */}
+            <div className="flex items-start gap-6 mb-8">
+              <DonutChart completed={completedInCategory} total={totalInCategory} size={100} strokeWidth={10} />
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold text-neutral-800 mb-1">
+                  {currentCategory}
+                </h2>
+                <p className="text-sm text-neutral-500 mb-3">
+                  {completedInCategory} of {totalInCategory} items completed
+                </p>
+                {/* Progress Bar */}
+                <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${categoryPercentage}%` }}
+                    transition={{ duration: 0.3 }}
+                    className="h-full bg-[#0EA5E9] rounded-full"
+                  />
+                </div>
+              </div>
+            </div>
 
-          {/* Checklist Items */}
-          <div className="space-y-3 h-[440px] overflow-y-auto pr-2">
+            {/* Checklist Items */}
+            <div className="space-y-3 h-[440px] overflow-y-auto pr-2">
             {categoryItems.map((item) => {
               const isExpanded = expandedItems.has(item.id);
               const hasReasoning = item.status === 'asked';
@@ -309,7 +318,7 @@ export const ChecklistInterface: React.FC<{ checklistItems?: ChecklistItem[] }> 
                               <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center shrink-0 mt-0.5">
                                 <Info size={12} className="text-neutral-500" />
                               </div>
-                              <p className="text-[9px] text-neutral-600 leading-relaxed py-0.5">{item.reasoning}</p>
+                              <p className="text-[9px] text-neutral-600 leading-relaxed py-1">{item.reasoning}</p>
                             </div>
                           </div>
                         </div>
@@ -319,6 +328,7 @@ export const ChecklistInterface: React.FC<{ checklistItems?: ChecklistItem[] }> 
                 </div>
               );
             })}
+            </div>
           </div>
         </div>
 

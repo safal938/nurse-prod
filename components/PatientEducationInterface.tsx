@@ -146,11 +146,13 @@ export const PatientEducationInterface: React.FC<{ educationItems?: EducationIte
     <div className="h-full flex gap-4">
       {/* Left Column - Things to Say (66%) */}
       <div className="flex-[2] flex flex-col bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-neutral-200 bg-neutral-50 shrink-0">
-          <h2 className="text-[10px] font-semibold text-neutral-800">Remaining Education</h2>
-          <p className="text-[10px] text-neutral-500 mt-1">
-            {pendingItems.length} pending
-          </p>
+        <div className="px-5 py-2.5 border-b border-neutral-200 bg-neutral-50 shrink-0">
+        <div className="flex items-center gap-2">
+  <h2 className="text-[10px] text-neutral-800">Remaining Education</h2>
+  <div className="h-3 w-px bg-neutral-300"></div>
+  <p className="text-[10px] text-neutral-500">{pendingItems.length} pending</p>
+</div>
+
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -186,11 +188,13 @@ export const PatientEducationInterface: React.FC<{ educationItems?: EducationIte
 
       {/* Right Column - Things Already Said (33%) */}
       <div className="flex-1 flex flex-col bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-neutral-200 bg-neutral-50 shrink-0">
-          <h2 className="text-[10px] font-semibold text-neutral-800">Educated Content</h2>
-          <p className="text-[10px] text-neutral-500 mt-1">
-            {deliveredItems.length} delivered
-          </p>
+        <div className="px-5 py-2.5 border-b border-neutral-200 bg-neutral-50 shrink-0">
+          <div className="flex items-center gap-2">
+  <h2 className="text-[10px] text-neutral-800">Educated Content</h2>
+  <div className="h-3 w-px bg-neutral-300"></div>
+  <p className="text-[10px] text-neutral-500">{deliveredItems.length} delivered</p>
+</div>
+
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
