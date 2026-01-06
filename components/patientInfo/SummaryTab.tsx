@@ -5,7 +5,7 @@ import patientSummaryData from '../../dataobjects/patient_summary.json';
 
 export const SummaryTab: React.FC = () => {
   return (
-    <div className="max-w-4xl mx-auto space-y-5">
+    <div className="xl:max-w-[70%] mx-auto space-y-5">
       {/* Chief Complaint */}
       <div className="bg-white rounded-lg border border-neutral-200 p-6">
         <div className="flex items-center gap-2 mb-4">

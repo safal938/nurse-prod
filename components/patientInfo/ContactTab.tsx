@@ -29,7 +29,7 @@ interface ContactTabProps {
 
 export const ContactTab: React.FC<ContactTabProps> = ({ patient, details }) => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <div className="grid xl:max-w-[70%] mx-auto grid-cols-1 lg:grid-cols-2 gap-5">
       {/* Contact Information Card - 1st */}
       <div className="bg-white rounded-lg border border-neutral-200 shadow-sm overflow-hidden">
         <div className="bg-neutral-50 px-4 py-2.5 border-b border-neutral-100">

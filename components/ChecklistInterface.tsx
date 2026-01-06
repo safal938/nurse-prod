@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, ChevronLeft, ChevronRight, ChevronDown, Info } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, ChevronDown, Info, AlertCircle } from 'lucide-react';
 
 interface ChecklistItem {
   id: string;
@@ -136,7 +136,7 @@ export const ChecklistInterface: React.FC<{ checklistItems?: ChecklistItem[] }> 
   // Use mock data immediately, fall back to dummy data if no external data
   const [items, setItems] = useState<ChecklistItem[]>(MOCK_CHECKLIST_ITEMS);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const initialCategory = Array.from(new Set(MOCK_CHECKLIST_ITEMS.map(item => item.category)))[0] || '';
+  const initialCategory = (Array.from(new Set(MOCK_CHECKLIST_ITEMS.map(item => item.category)))[0] as string) || '';
   const [currentCategory, setCurrentCategory] = useState<string>(initialCategory);
 
   // Update when external items change
@@ -152,8 +152,16 @@ export const ChecklistInterface: React.FC<{ checklistItems?: ChecklistItem[] }> 
   }, [externalItems, currentCategory]);
 
   // Get unique categories from items
-  const categories = Array.from(new Set(items.map(item => item.category)));
+  const categories = Array.from(new Set(items.map(item => item.category))) as string[];
   const currentCategoryIndex = categories.indexOf(currentCategory);
+
+  // Calculate completion status for each category
+  const getCategoryCompletion = (category: string) => {
+    const categoryItems = items.filter(item => item.category === category);
+    const completed = categoryItems.filter(item => item.completed).length;
+    const total = categoryItems.length;
+    return { completed, total, isComplete: completed === total };
+  };
 
   const handlePrevCategory = () => {
     const newIndex = currentCategoryIndex === 0 ? categories.length - 1 : currentCategoryIndex - 1;
@@ -205,22 +213,34 @@ export const ChecklistInterface: React.FC<{ checklistItems?: ChecklistItem[] }> 
           {/* Tab Navigation */}
           <div className="bg-white border-b border-neutral-200 px-6 pt-6">
             <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setCurrentCategory(cat)}
-                  className={`px-4 py-2 text-[10px] whitespace-nowrap transition-all relative rounded-t-lg ${
-                    currentCategory === cat
-                      ? 'text-neutral-900 bg-neutral-50'
-                      : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50/50'
-                  }`}
-                >
-                  {cat}
-                  {currentCategory === cat && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500 rounded-t-full" />
-                  )}
-                </button>
-              ))}
+              {categories.map((cat) => {
+                const categoryStatus = getCategoryCompletion(cat);
+                const hasIncomplete = !categoryStatus.isComplete;
+                const isActive = currentCategory === cat;
+                
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setCurrentCategory(cat)}
+                    className={`px-4 py-2 text-[10px] whitespace-nowrap transition-all relative rounded-t-lg flex items-center gap-1.5 ${
+                      isActive
+                        ? 'text-neutral-900 bg-neutral-50'
+                        : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50/50'
+                    }`}
+                  >
+                    {hasIncomplete && !isActive && (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0">
+                        <circle cx="12" cy="12" r="10" fill="#ef4444" />
+                        <path d="M12 8v4M12 16h.01" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                    {cat}
+                    {isActive && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500 rounded-t-full" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
