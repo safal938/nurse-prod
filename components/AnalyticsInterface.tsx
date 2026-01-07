@@ -46,9 +46,9 @@ const MetricCard: React.FC<MetricCardProps> = ({
   
   // Determine color based on score
   const getColor = () => {
-    if (score >= 80) return { stroke: '#0EA5E9', bg: '#e0f2fe', text: '#0284c7' }; // Excellent - strong cyan
-    if (score >= 60) return { stroke: '#38bdf8', bg: '#e0f2fe', text: '#0284c7' }; // Good - lighter cyan
-    return { stroke: '#7dd3fc', bg: '#e0f2fe', text: '#0284c7' }; // Needs Improvement - very light cyan
+    if (score >= 80) return { stroke: '#0EA5E9', bg: '#e0f2fe', text: '#0284c7' }; // Excellent - blue
+    if (score >= 60) return { stroke: '#10b981', bg: '#d1fae5', text: '#059669' }; // Good - green
+    return { stroke: '#f97316', bg: '#ffedd5', text: '#ea580c' }; // Needs Improvement - orange
   };
   
   const colors = getColor();
@@ -93,8 +93,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
           <h3 className="text-sm font-semibold text-neutral-900 mb-1">{title}</h3>
           <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
             score >= 80 ? 'bg-sky-100 text-sky-700' : 
-            score >= 60 ? 'bg-orange-100 text-orange-700' : 
-            'bg-red-100 text-red-700'
+            score >= 60 ? 'bg-emerald-100 text-emerald-700' : 
+            'bg-orange-100 text-orange-700'
           }`}>
             {score >= 80 ? <TrendingUp size={10} /> : score >= 60 ? <Minus size={10} /> : <TrendingDown size={10} />}
             {score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : 'Needs Improvement'}

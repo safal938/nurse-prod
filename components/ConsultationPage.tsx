@@ -586,14 +586,9 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
           <div className="flex items-center gap-2">
             <span className="text-[10px] text-slate-600 uppercase tracking-wide font-semibold">Diagnosis</span>
             {topDiagnosis ? (
-              <>
-                <span className="px-2 py-0.5 bg-cyan-600 text-white text-[10px] font-bold rounded shadow-sm">
-                  {topDiagnosis.headline || 'DILI'}
-                </span>
-                <div className="w-16 h-1.5 bg-cyan-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-cyan-500 rounded-full" style={{ width: `${Math.min(90, topDiagnosis.rank ? (100 - topDiagnosis.rank * 10) : 85)}%` }}></div>
-                </div>
-              </>
+              <span className="px-2 py-0.5 bg-cyan-600 text-white text-[10px] font-bold rounded shadow-sm">
+                {topDiagnosis.headline || 'DILI'}
+              </span>
             ) : (
               <span className="text-[10px] text-slate-400">Not Ready</span>
             )}

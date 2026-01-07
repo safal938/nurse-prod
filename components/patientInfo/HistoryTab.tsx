@@ -12,6 +12,62 @@ interface HistoryTabProps {
 export const HistoryTab: React.FC<HistoryTabProps> = ({ onDocumentClick }) => {
   return (
     <div className="xl:max-w-[70%] mx-auto space-y-5">
+
+
+       <div className="bg-white rounded-lg border border-neutral-200 p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Calendar size={16} className="text-neutral-500" />
+          <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">Previous Encounters</span>
+        </div>
+        <div className="space-y-3">
+          {medicalHistoryData.previousEncounters.map((encounter, idx) => (
+            <div key={idx} className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h4 className="text-base font-bold text-neutral-900">{encounter.reason}</h4>
+                  <p className="text-sm text-neutral-600 mt-1">{encounter.location} • {encounter.provider}</p>
+                </div>
+                <span className="text-xs text-neutral-500 font-medium">{encounter.date}</span>
+              </div>
+              <p className="text-sm text-neutral-800 mb-3 leading-relaxed">{highlightText(encounter.summary.text, encounter.summary.highlights)}</p>
+              <button
+                onClick={() => onDocumentClick(patientInfoData.documents.findIndex(d => d.id === encounter.document.id))}
+                className="text-sm text-neutral-700 hover:text-neutral-900 font-medium underline"
+              >
+                View Clinical Note →
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+        <div className="bg-white rounded-lg border border-neutral-200 p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <History size={16} className="text-neutral-500" />
+          <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">Past Medical History</span>
+        </div>
+        <div className="space-y-3">
+          {medicalHistoryData.pastMedicalHistory.map((item, idx) => (
+            <div key={idx} className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+              <div className="flex items-start justify-between mb-2">
+                <h4 className="text-base font-bold text-neutral-900">{item.condition}</h4>
+                <span className="text-xs text-neutral-500 font-medium">{item.date || item.status}</span>
+              </div>
+              {item.treatment && (
+                <p className="text-sm text-neutral-700 mb-2">
+                  <span className="font-medium">Treatment:</span> {highlightText(item.treatment.text, item.treatment.highlights)}
+                </p>
+              )}
+              {item.details && (
+                <p className="text-sm text-neutral-700 mb-2">{highlightText(item.details.text, item.details.highlights)}</p>
+              )}
+              <p className="text-sm text-neutral-600 italic bg-white p-2 rounded border border-neutral-200 mt-2">
+                <span className="font-medium not-italic">Relevance:</span> {highlightText(item.relevance.text, item.relevance.highlights)}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
       {/* Laboratory Findings - Critical Data */}
       <div className="bg-white rounded-lg border border-neutral-200 p-6">
         <div className="flex items-center gap-2 mb-5">
@@ -148,61 +204,10 @@ export const HistoryTab: React.FC<HistoryTabProps> = ({ onDocumentClick }) => {
       </div>
 
       {/* Past Medical History */}
-      <div className="bg-white rounded-lg border border-neutral-200 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <History size={16} className="text-neutral-500" />
-          <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">Past Medical History</span>
-        </div>
-        <div className="space-y-3">
-          {medicalHistoryData.pastMedicalHistory.map((item, idx) => (
-            <div key={idx} className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
-              <div className="flex items-start justify-between mb-2">
-                <h4 className="text-base font-bold text-neutral-900">{item.condition}</h4>
-                <span className="text-xs text-neutral-500 font-medium">{item.date || item.status}</span>
-              </div>
-              {item.treatment && (
-                <p className="text-sm text-neutral-700 mb-2">
-                  <span className="font-medium">Treatment:</span> {highlightText(item.treatment.text, item.treatment.highlights)}
-                </p>
-              )}
-              {item.details && (
-                <p className="text-sm text-neutral-700 mb-2">{highlightText(item.details.text, item.details.highlights)}</p>
-              )}
-              <p className="text-sm text-neutral-600 italic bg-white p-2 rounded border border-neutral-200 mt-2">
-                <span className="font-medium not-italic">Relevance:</span> {highlightText(item.relevance.text, item.relevance.highlights)}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+    
 
       {/* Previous Encounters */}
-      <div className="bg-white rounded-lg border border-neutral-200 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Calendar size={16} className="text-neutral-500" />
-          <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">Previous Encounters</span>
-        </div>
-        <div className="space-y-3">
-          {medicalHistoryData.previousEncounters.map((encounter, idx) => (
-            <div key={idx} className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <h4 className="text-base font-bold text-neutral-900">{encounter.reason}</h4>
-                  <p className="text-sm text-neutral-600 mt-1">{encounter.location} • {encounter.provider}</p>
-                </div>
-                <span className="text-xs text-neutral-500 font-medium">{encounter.date}</span>
-              </div>
-              <p className="text-sm text-neutral-800 mb-3 leading-relaxed">{highlightText(encounter.summary.text, encounter.summary.highlights)}</p>
-              <button
-                onClick={() => onDocumentClick(patientInfoData.documents.findIndex(d => d.id === encounter.document.id))}
-                className="text-sm text-neutral-700 hover:text-neutral-900 font-medium underline"
-              >
-                View Clinical Note →
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
+     
 
       {/* All Documents Gallery */}
       <div className="bg-white rounded-lg border border-neutral-200 p-5">
