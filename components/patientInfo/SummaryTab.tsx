@@ -1,7 +1,8 @@
 import React from 'react';
-import { Activity, Stethoscope, User, FileText, Clock } from 'lucide-react';
+import { Activity, Stethoscope, User, Clock, Droplet } from 'lucide-react';
 import { highlightText } from './utils';
 import patientSummaryData from '../../dataobjects/patient_summary.json';
+import { ElevatedCard } from './BiomarkerCards';
 
 export const SummaryTab: React.FC = () => {
   return (
@@ -55,22 +56,113 @@ export const SummaryTab: React.FC = () => {
         </ul>
       </div>
 
-      {/* Key Findings */}
+      {/* Key Findings - Biomarker Cards */}
       <div className="bg-white rounded-lg border border-neutral-200 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <FileText size={16} className="text-neutral-500" />
-          <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">Key Lab & Imaging Findings</span>
+        <div className="flex items-center gap-2 mb-6">
+          <Droplet size={16} className="text-neutral-500" />
+          <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">Key Lab Findings</span>
         </div>
-        <ul className="space-y-3">
-          {patientSummaryData.keyFindings.map((finding, idx) => (
-            <li key={idx} className="flex items-start gap-3">
+        
+        {/* Biomarker Cards - Single Column */}
+        <div className="space-y-4 mb-6">
+          {/* ALT - Elevated */}
+          <ElevatedCard
+            title="ALT (Alanine Aminotransferase)"
+            value={620}
+            unit="U/L"
+            date="2 days ago"
+            ranges={[0, 10, 40, 800]}
+            normalRange="10-40 U/L"
+            chartData={[
+              { date: '3 weeks ago', value: 28 },
+              { date: '2 weeks ago', value: 35 },
+              { date: '1 week ago', value: 180 },
+              { date: '3 days ago', value: 420 },
+              { date: 'Today', value: 620 }
+            ]}
+          />
+          
+          {/* AST - Elevated */}
+          <ElevatedCard
+            title="AST (Aspartate Aminotransferase)"
+            value={450}
+            unit="U/L"
+            date="2 days ago"
+            ranges={[0, 10, 35, 600]}
+            normalRange="10-35 U/L"
+            chartData={[
+              { date: '3 weeks ago', value: 22 },
+              { date: '2 weeks ago', value: 30 },
+              { date: '1 week ago', value: 150 },
+              { date: '3 days ago', value: 320 },
+              { date: 'Today', value: 450 }
+            ]}
+          />
+          
+          {/* Total Bilirubin - Elevated */}
+          <ElevatedCard
+            title="Total Bilirubin"
+            value={5.2}
+            unit="mg/dL"
+            date="2 days ago"
+            ranges={[0, 0.3, 1.2, 10]}
+            normalRange="0.3-1.2 mg/dL"
+            chartData={[
+              { date: '3 weeks ago', value: 0.8 },
+              { date: '2 weeks ago', value: 0.9 },
+              { date: '1 week ago', value: 1.8 },
+              { date: '3 days ago', value: 3.5 },
+              { date: 'Today', value: 5.2 }
+            ]}
+          />
+          
+          {/* Direct Bilirubin - Elevated */}
+          <ElevatedCard
+            title="Direct Bilirubin"
+            value={3.8}
+            unit="mg/dL"
+            date="2 days ago"
+            ranges={[0, 0, 0.3, 8]}
+            normalRange="0-0.3 mg/dL"
+            chartData={[
+              { date: '3 weeks ago', value: 0.1 },
+              { date: '2 weeks ago', value: 0.15 },
+              { date: '1 week ago', value: 1.2 },
+              { date: '3 days ago', value: 2.5 },
+              { date: 'Today', value: 3.8 }
+            ]}
+          />
+          
+          {/* Eosinophils - Elevated */}
+          <ElevatedCard
+            title="Eosinophils"
+            value={8.5}
+            unit="%"
+            date="2 days ago"
+            ranges={[0, 1, 4, 15]}
+            normalRange="1-4%"
+            chartData={[
+              { date: '3 weeks ago', value: 2.5 },
+              { date: '2 weeks ago', value: 3.0 },
+              { date: '1 week ago', value: 5.5 },
+              { date: '3 days ago', value: 7.2 },
+              { date: 'Today', value: 8.5 }
+            ]}
+          />
+        </div>
+        
+        {/* Additional Findings */}
+        <div className="pt-4 border-t border-neutral-100">
+          <h4 className="text-sm font-semibold text-neutral-700 mb-3">Imaging Findings</h4>
+          <ul className="space-y-2">
+            <li className="flex items-start gap-3">
               <span className="w-2 h-2 rounded-full bg-neutral-400 mt-2 shrink-0"></span>
-              <span className="text-base text-neutral-800 leading-relaxed">
-                {highlightText(finding.text, finding.highlights)}
+              <span className="text-sm text-neutral-800 leading-relaxed">
+                Moderate hepatic steatosis on ultrasound
               </span>
             </li>
-          ))}
-        </ul>
+          </ul>
+        </div>
       </div>
 
       {/* Timeline */}

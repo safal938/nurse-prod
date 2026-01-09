@@ -83,6 +83,14 @@
       .scrollbar-hover:hover {
         scrollbar-color: #d4d4d4 transparent;
       }
+      
+      /* Remove focus outline from recharts elements */
+      .recharts-wrapper,
+      .recharts-surface,
+      .recharts-wrapper *:focus,
+      .recharts-surface *:focus {
+        outline: none !important;
+      }
     </style>
   <script type="importmap">
 {
