@@ -134,9 +134,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 </button>
               </div>
 
-              {/* Content */}
               <div className="p-6 space-y-3">
-                {/* New Patient Option */}
                 <button
                   onClick={() => handleConsultationTypeSelect('new')}
                   className="w-full text-left rounded-lg border border-neutral-200 hover:border-cyan-500 hover:bg-cyan-50/50 p-4 transition-all"
@@ -147,12 +145,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     </div>
                     <div className="flex-1">
                       <h3 className="text-base font-semibold text-neutral-900">New Patient</h3>
-                      <p className="text-sm text-neutral-500 mt-0.5">Duration: 30 minutes</p>
+                      <p className="text-sm text-neutral-500 mt-0.5">Duration: 20 minutes</p>
                     </div>
                   </div>
                 </button>
 
-                {/* Follow Up Option */}
                 <button
                   onClick={() => handleConsultationTypeSelect('followup')}
                   className="w-full text-left rounded-lg border border-neutral-200 hover:border-cyan-500 hover:bg-cyan-50/50 p-4 transition-all"
@@ -163,7 +160,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     </div>
                     <div className="flex-1">
                       <h3 className="text-base font-semibold text-neutral-900">Follow Up</h3>
-                      <p className="text-sm text-neutral-500 mt-0.5">Duration: 15 minutes</p>
+                      <p className="text-sm text-neutral-500 mt-0.5">Duration: 10 minutes</p>
                     </div>
                   </div>
                 </button>

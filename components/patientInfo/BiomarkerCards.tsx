@@ -161,20 +161,15 @@ const RangeIndicator: React.FC<RangeIndicatorProps> = ({
   const getPosition = (val: number) => {
     if (val <= min) return 0;
     if (val >= max) return 100;
-
-    if (val < low) {
-      const pct = (val - min) / (low - min);
-      return pct * 32;
-    } else if (val >= low && val <= high) {
-      const pct = (val - low) / (high - low);
-      return 34 + (pct * 32);
-    } else {
-      const pct = (val - high) / (max - high);
-      return 68 + (pct * 32);
-    }
+    
+    // Linear positioning across the entire range
+    return ((val - min) / (max - min)) * 100;
   };
 
   const leftPos = getPosition(value);
+  const lowPos = getPosition(low);
+  const highPos = getPosition(high);
+  
   const isSafe = value >= low && value <= high;
   const indicatorColorClass = isSafe ? 'bg-emerald-500' : 'bg-red-500';
 
@@ -208,33 +203,79 @@ const RangeIndicator: React.FC<RangeIndicatorProps> = ({
         )}
       </div>
 
-      <div className={`flex w-full items-center ${minimal ? 'h-1.5 gap-1' : 'h-2.5 gap-1.5'}`}>
-         <div className="flex-1 h-full bg-red-100 rounded-l-full relative overflow-hidden group">
-            <div className="absolute inset-0 bg-red-400/90 group-hover:bg-red-500 transition-colors"></div>
-         </div>
-         
-         <div className="flex-1 h-full bg-emerald-100 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-emerald-400 group-hover:bg-emerald-500 transition-colors"></div>
-         </div>
-
-         <div className="flex-1 h-full bg-red-100 rounded-r-full relative overflow-hidden group">
-            <div className="absolute inset-0 bg-red-400/90 group-hover:bg-red-500 transition-colors"></div>
-         </div>
+      {/* Unified slider bar with gradient */}
+      <div className={`relative w-full ${minimal ? 'h-1.5' : 'h-2.5'} rounded-full overflow-hidden`}>
+        {/* Background gradient from red -> green -> red */}
+        <div className="absolute inset-0 flex">
+          <div 
+            className="h-full bg-gradient-to-r from-red-400 to-red-300"
+            style={{ width: `${lowPos}%` }}
+          ></div>
+          <div 
+            className="h-full bg-gradient-to-r from-emerald-400 to-emerald-400"
+            style={{ width: `${highPos - lowPos}%` }}
+          ></div>
+          <div 
+            className="h-full bg-gradient-to-r from-red-300 to-red-400"
+            style={{ width: `${100 - highPos}%` }}
+          ></div>
+        </div>
+        
+        {/* Vertical line markers for safe zone boundaries */}
+        <div 
+          className="absolute top-0 bottom-0 w-0.5 bg-white shadow-sm z-10"
+          style={{ left: `${lowPos}%` }}
+        ></div>
+        <div 
+          className="absolute top-0 bottom-0 w-0.5 bg-white shadow-sm z-10"
+          style={{ left: `${highPos}%` }}
+        ></div>
       </div>
 
       {!minimal && (
         <>
-          <div className="flex justify-between w-full mt-1.5 text-[8px] font-semibold text-gray-400 uppercase tracking-wider px-1">
-            <span className="flex-1 text-left text-red-400/70">Low</span>
-            <span className="flex-1 text-center text-emerald-500">Safe Zone</span>
-            <span className="flex-1 text-right text-red-400/70">High</span>
+          <div className="flex justify-between w-full mt-1.5 text-[8px] font-semibold text-gray-400 uppercase tracking-wider">
+            <span className="text-red-400/70">Low</span>
+            <span className="text-red-400/70">High</span>
           </div>
           
-          <div className="flex justify-between w-full mt-0.5 text-[9px] font-bold text-gray-500 tabular-nums">
-            <span>{min}</span>
-            <span>{low}</span>
-            <span>{high}</span>
-            <span>{max}</span>
+          {/* Position labels according to their actual position on the slider */}
+          <div className="relative w-full mt-0.5 h-4">
+            {/* Min label - always at start, no transform */}
+            <span 
+              className="absolute text-[9px] font-bold text-gray-500 tabular-nums"
+              style={{ left: '0%' }}
+            >
+              {min}
+            </span>
+            
+            {/* Low threshold - only show if different from min and has enough space (>5%) */}
+            {low !== min && lowPos > 5 && (
+              <span 
+                className="absolute text-[9px] font-bold text-emerald-600 tabular-nums transform -translate-x-1/2"
+                style={{ left: `${lowPos}%` }}
+              >
+                {low}
+              </span>
+            )}
+            
+            {/* High threshold - only show if different from max and has enough space (<95%) and not too close to low */}
+            {high !== max && highPos < 95 && (lowPos < 5 || Math.abs(highPos - lowPos) > 5) && (
+              <span 
+                className="absolute text-[9px] font-bold text-emerald-600 tabular-nums transform -translate-x-[0.4]"
+                style={{ left: `${highPos}%` }}
+              >
+                {high}
+              </span>
+            )}
+            
+            {/* Max label - always at end, no transform */}
+            <span 
+              className="absolute text-[9px] font-bold text-gray-500 tabular-nums"
+              style={{ right: '0%' }}
+            >
+              {max}
+            </span>
           </div>
         </>
       )}
@@ -263,7 +304,7 @@ export const ElevatedCard: React.FC<ElevatedCardProps> = ({
   chartData = []
 }) => {
   return (
-    <div className="w-full bg-white rounded-xl shadow-[0_2px_16px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all hover:shadow-[0_6px_24px_rgb(0,0,0,0.04)] focus:outline-none focus:ring-0">
+    <div className="w-full bg-white rounded-xl shadow-[0_2px_16px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden transition-all hover:shadow-[0_6px_24px_rgb(0,0,0,0.04)] ">
       <div className="p-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
         
         {/* Left Column: Metrics */}

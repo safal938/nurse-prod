@@ -173,7 +173,7 @@ const SmallDonut: React.FC<SmallDonutProps> = ({ percentage, label, count }) => 
 
 export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }> = ({ patient, onBack }) => {
   const [activeSection, setActiveSection] = useState<SectionId>('patient');
-  const [consultationDuration, setConsultationDuration] = useState<number>(30); // Default 30 minutes
+  const [consultationDuration, setConsultationDuration] = useState<number>(20); // Default 20 minutes
   const sessionRef = useRef<ClinicalSession | null>(null);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
@@ -242,9 +242,9 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
   // Handle consultation type selection and start WebSocket session
   const handleConsultationTypeSelected = (type: 'new' | 'followup') => {
     if (type === 'new') {
-      setConsultationDuration(30);
+      setConsultationDuration(20);
     } else {
-      setConsultationDuration(15);
+      setConsultationDuration(10);
     }
 
     // Start timer
@@ -606,7 +606,7 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
               onClick={() => setActiveSection(item.id)}
               className={`flex flex-col items-center justify-center py-2.5 px-1 mx-1.5 rounded-lg transition-all ${
                 activeSection === item.id
-                  ? 'bg-neutral-100 text-neutral-900'
+                  ? 'bg-cyan-50 text-cyan-600'
                   : 'text-neutral-400 hover:bg-neutral-50 hover:text-neutral-600'
               }`}
             >
