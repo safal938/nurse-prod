@@ -2,14 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, CheckCircle2, Play, X } from 'lucide-react';
 import { Diagnosis } from '../types';
-import diagnosisData from '../dataobjects/new_format/diagnosis.json';
-
-// Data from backend: dataobjects/new_format/diagnosis.json
-// Filter to get unique diagnoses by did (remove duplicates)
-const allDiagnoses = diagnosisData.diagnosis as Diagnosis[];
-const BACKEND_DIAGNOSES: Diagnosis[] = allDiagnoses.filter((diagnosis, index, self) =>
-  index === self.findIndex((d) => d.did === diagnosis.did)
-);
 
 // Helper to generate short names from diagnosis
 const getShortName = (headline: string): string => {
@@ -17,14 +9,15 @@ const getShortName = (headline: string): string => {
 };
 
 export const DiagnosticInterface: React.FC<{ diagnoses?: Diagnosis[] }> = ({ diagnoses: externalDiagnoses = [] }) => {
-  // Use backend data immediately, fall back to dummy data if no external data
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>(BACKEND_DIAGNOSES);
-  const [selectedDiagnosis, setSelectedDiagnosis] = useState<Diagnosis | null>(BACKEND_DIAGNOSES[0] || null);
+  // Start with empty array, only use backend data when it arrives
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  const [selectedDiagnosis, setSelectedDiagnosis] = useState<Diagnosis | null>(null);
 
   // Update diagnoses when external data changes
   useEffect(() => {
     if (externalDiagnoses.length > 0) {
       setDiagnoses(externalDiagnoses);
+      // Auto-select first diagnosis if none selected or current selection not in new list
       if (!selectedDiagnosis || !externalDiagnoses.find(d => d.did === selectedDiagnosis.did)) {
         setSelectedDiagnosis(externalDiagnoses[0]);
       }
@@ -35,8 +28,8 @@ export const DiagnosticInterface: React.FC<{ diagnoses?: Diagnosis[] }> = ({ dia
     return null;
   }
 
-  const primaryDiagnosis = BACKEND_DIAGNOSES[0];
-  const otherDiagnoses = BACKEND_DIAGNOSES.slice(1);
+  const primaryDiagnosis = diagnoses[0];
+  const otherDiagnoses = diagnoses.slice(1);
 
   const getConfidenceWidth = (rank: number) => {
     if (rank === 1) return 90;

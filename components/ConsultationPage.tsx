@@ -282,9 +282,9 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
     
     const session = new ClinicalSession(patientId, gender, {
       onChat: (messages) => {
-        console.log('Received chat messages:', messages.length);
-        setChatMessages(messages);
+        console.log('[ConsultationPage] Received chat messages:', messages);
         addDebugLog('chat', { count: messages.length, data: messages });
+        setChatMessages(messages);
       },
       onDiagnoses: (newDiagnoses) => {
         console.log('Received diagnoses:', newDiagnoses.length);
@@ -519,9 +519,9 @@ export const ConsultationPage: React.FC<{ patient: Patient; onBack: () => void }
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] font-semibold text-slate-700">
-                  {isSessionActive ? 'Listening' : 'Connecting...'}
+                  {isSessionActive ? 'Connected' : 'Connecting...'}
                 </span>
-                <span className="text-[8px] text-slate-500">Voice Active</span>
+                <span className="text-[8px] text-slate-500">Voice Simulation</span>
               </div>
               {/* Stop Button */}
               <button

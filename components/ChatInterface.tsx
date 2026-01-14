@@ -85,14 +85,28 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   // Initialize with backend data immediately, update when external data changes
   useEffect(() => {
+    console.log('[ChatInterface] External chat messages updated:', externalChatMessages);
+    
     if (externalChatMessages.length > 0) {
-      const formattedMessages = externalChatMessages.map((msg, idx) => ({
-        id: Date.now() + idx,
-        text: msg.message || '',
-        sender: msg.role as 'Nurse' | 'Patient',
-        timestamp: new Date(),
-        highlights: msg.highlights
-      }));
+      const formattedMessages = externalChatMessages.map((msg, idx) => {
+        // Normalize role to capitalized format
+        let sender: 'Nurse' | 'Patient' = 'Patient';
+        if (msg.role === 'Nurse' || msg.role === 'admin') {
+          sender = 'Nurse';
+        } else if (msg.role === 'Patient' || msg.role === 'patient') {
+          sender = 'Patient';
+        }
+        
+        return {
+          id: Date.now() + idx,
+          text: msg.message || '',
+          sender: sender,
+          timestamp: new Date(),
+          highlights: msg.highlights
+        };
+      });
+      
+      console.log('[ChatInterface] Formatted messages:', formattedMessages);
       setMessages(formattedMessages);
     }
   }, [externalChatMessages]);

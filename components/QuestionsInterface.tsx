@@ -4,118 +4,6 @@ import { Circle } from 'lucide-react';
 import { QuestionCard, QuestionCardData } from './interaction/QuestionCard';
 import { Question } from '../types';
 
-// Data from backend: dataobjects/questions_logic_check_20251230_140640.json
-const BACKEND_QUESTIONS: Question[] = [
-  {
-    content: "What brings you in today?",
-    qid: "00001",
-    rank: 999,
-    status: "asked",
-    answer: "What can I help you with today?",
-    headline: "Chief Complaint",
-    domain: "Symptom Triage",
-    system_affected: "General",
-    clinical_intent: "To understand the primary reason for the patient's visit and gather initial information about their presenting problem.",
-    tags: ["reason for visit", "chief complaint", "presenting problem"]
-  },
-  {
-    content: "Current Medications",
-    qid: "00004",
-    rank: 999,
-    status: "asked",
-    answer: "I'm yellow. And this itching is driving. Me nuts. Feels like there are ants under my skin. What's going on? Am I dying?",
-    headline: "Current Medications",
-    domain: "Medication Review",
-    system_affected: "General",
-    clinical_intent: "To obtain an accurate and up-to-date list of all prescribed and over-the-counter medications the patient is currently taking.",
-    tags: ["medication", "current", "list"]
-  },
-  {
-    content: "Do you have any known drug allergies?",
-    qid: "00005",
-    rank: 999,
-    status: "asked",
-    answer: "I'm yellow. And this itching is driving. Me nuts. Feels like there are ants under my skin.",
-    headline: "Drug Allergies",
-    domain: "Medical History",
-    system_affected: "General",
-    clinical_intent: "To identify potential adverse reactions to medications and ensure patient safety.",
-    tags: ["allergy", "drug", "medication", "adverse reaction"]
-  },
-  {
-    content: "Have you had any surgeries in the past?",
-    qid: "00006",
-    rank: 6,
-    status: null,
-    answer: null,
-    headline: "Past Surgical History",
-    domain: "Surgical History",
-    system_affected: "General",
-    clinical_intent: "To gather information on previous surgical interventions which may impact current health status or future treatment.",
-    tags: ["surgery", "past procedures", "medical history"]
-  },
-  {
-    qid: "A1B2C",
-    content: "Have you noticed any changes in the color of your urine (darker) or stool (lighter) recently?",
-    status: "asked",
-    answer: "Yeah, I got this dull ache under my ribs. Not sharp just heavy. And I'm really tired how to leave work early yesterday.",
-    rank: 1,
-    headline: "Gastrointestinal Symptom Assessment",
-    domain: "Symptom Triage",
-    system_affected: "Gastrointestinal",
-    clinical_intent: "To assess for common gastrointestinal symptoms that may indicate an underlying condition, particularly related to the hepatobiliary system.",
-    tags: ["nausea", "vomiting", "abdominal pain", "GI symptoms"]
-  },
-  {
-    qid: "D3E4F",
-    content: "Have you had any recent travel, exposure to new people, or engaged in any activities that might put you at risk for viral hepatitis?",
-    status: null,
-    answer: null,
-    rank: 2,
-    headline: "Hepatitis Exposure Risk",
-    domain: "Symptom Triage",
-    system_affected: "Gastrointestinal",
-    clinical_intent: "To assess potential exposure risks for viral hepatitis, including travel and social contacts.",
-    tags: ["hepatitis", "exposure", "travel", "viral illness"]
-  },
-  {
-    qid: "G5H6I",
-    content: "On a scale of 0 to 10, how severe is your jaw pain currently, and does it radiate anywhere else in your face or head?",
-    status: "asked",
-    answer: "Yeah, I got this dull ache under my ribs. Not sharp just heavy. And I'm really tired how to leave work early yesterday.",
-    rank: 999,
-    headline: "Jaw Pain Assessment",
-    domain: "Symptom Triage",
-    system_affected: "Neurological",
-    clinical_intent: "To quantify the severity of jaw pain and identify any associated radiating pain patterns.",
-    tags: ["pain", "jaw pain", "neuropathic pain", "headache"]
-  },
-  {
-    qid: "XYZ78",
-    content: "Have you had any recent travel, consumed raw seafood, or had any close contact with someone who has had similar symptoms?",
-    status: null,
-    answer: null,
-    rank: 5,
-    headline: "Hepatitis Exposure Risk",
-    domain: "Symptom Triage",
-    system_affected: "Gastrointestinal",
-    clinical_intent: "To identify potential risk factors for hepatitis infection, such as travel, dietary exposure, or contact with infected individuals.",
-    tags: ["hepatitis", "risk factors", "travel", "foodborne illness"]
-  },
-  {
-    qid: "J7K8L",
-    content: "Can you estimate how many Extra Strength Tylenol pills you take in a typical day, and how often you take Tylenol PM?",
-    status: null,
-    answer: null,
-    rank: 3,
-    headline: "Tylenol Usage",
-    domain: "Medication Review",
-    system_affected: "General",
-    clinical_intent: "To quantify the daily intake of Extra Strength Tylenol and the frequency of Tylenol PM use for medication adherence and safety assessment.",
-    tags: ["acetaminophen", "over-the-counter", "medication use", "pain relief"]
-  }
-];
-
 const mapQuestionToCardData = (q: Question): QuestionCardData => {
   let status: 'answered' | 'pending' | 'urgent' = 'pending';
   if (q.status === 'asked' && q.answer) {
@@ -134,8 +22,8 @@ const mapQuestionToCardData = (q: Question): QuestionCardData => {
 };
 
 export const QuestionsInterface: React.FC<{ questions?: Question[] }> = ({ questions: externalQuestions = [] }) => {
-  // Use backend data immediately, fall back to dummy data if no external data
-  const [questions, setQuestions] = useState<Question[]>(BACKEND_QUESTIONS);
+  // Start with empty array, only use backend data when it arrives
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
   // Track mount state to disable initial animations

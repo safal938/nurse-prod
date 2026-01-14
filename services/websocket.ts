@@ -2,8 +2,7 @@ import { Diagnosis, Question, ChatMessage, EducationItem, AnalyticsData, Checkli
 
 // WebSocket endpoints - use wss:// for secure connections
 const WS_BASE_URL = 'wss://clinic-hepa-v2-481780815788.europe-west1.run.app';
-const TRANSCRIBER_URL = `${WS_BASE_URL}/ws/transcriber`;
-const SIMULATION_URL = `${WS_BASE_URL}/ws/simulation`;
+const SIMULATION_URL = `${WS_BASE_URL}/ws/simulation/audio`;
 
 // Message types from backend
 export interface ChatMessageData {
@@ -86,17 +85,16 @@ export interface SessionCallbacks {
 }
 
 export class ClinicalSession {
-  private transcriberSocket: WebSocket | null = null;
-  private simulationSocket: WebSocket | null = null;
-  private audioContext: AudioContext | null = null;
-  private nextStartTime: number = 0;
+  private socket: WebSocket | null = null;
   private callbacks: SessionCallbacks;
   private patientId: string;
   private gender: string;
   private isRunning: boolean = false;
-  private bytesTotal: number = 0;
-
-  private static readonly SAMPLE_RATE = 24000;
+  private audioQueue: string[] = [];
+  private isPlayingAudio: boolean = false;
+  private currentAudioChunks: Uint8Array[] = [];
+  private pendingChatMessages: ChatMessage[] = []; // Queue for chat messages waiting for audio
+  private currentAudioElement: HTMLAudioElement | null = null;
 
   constructor(patientId: string, gender: string, callbacks: SessionCallbacks) {
     this.patientId = patientId;
@@ -109,57 +107,61 @@ export class ClinicalSession {
     console.log(`[ClinicalSession] ${message}`);
   }
 
-  private async initAudio() {
-    if (!this.audioContext) {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ 
-        sampleRate: ClinicalSession.SAMPLE_RATE 
-      });
-    }
-    if (this.audioContext.state === 'suspended') {
-      await this.audioContext.resume();
-    }
-    this.nextStartTime = this.audioContext.currentTime;
-  }
-
-  private base64ToBuffer(base64: string): ArrayBuffer {
+  private base64ToBuffer(base64: string): Uint8Array {
     const binary = window.atob(base64);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
       bytes[i] = binary.charCodeAt(i);
     }
-    return bytes.buffer;
+    return bytes;
   }
 
-  private playAndRelayAudio(buffer: ArrayBuffer) {
-    if (!this.audioContext) return;
-    
-    // Send to transcriber immediately for faster processing
-    if (this.transcriberSocket && this.transcriberSocket.readyState === WebSocket.OPEN) {
-      this.transcriberSocket.send(buffer);
-      this.bytesTotal += buffer.byteLength;
-      this.log(`Relayed ${this.bytesTotal.toLocaleString()} bytes total`);
+  private handleAudioPacket(data: any) {
+    if (data.data) {
+      const bytes = this.base64ToBuffer(data.data);
+      this.currentAudioChunks.push(bytes);
     }
-    
-    // Then handle audio playback
-    const int16 = new Int16Array(buffer);
-    const float32 = new Float32Array(int16.length);
-    
-    for (let i = 0; i < int16.length; i++) {
-      float32[i] = int16[i] / 32768.0;
+
+    if (data.isFinal) {
+      if (this.currentAudioChunks.length > 0) {
+        const blob = new Blob(this.currentAudioChunks, { type: 'audio/mp3' });
+        const url = URL.createObjectURL(blob);
+        this.audioQueue.push(url);
+        this.playNextAudio();
+        this.currentAudioChunks = [];
+      }
     }
+  }
+
+  private playNextAudio() {
+    if (this.isPlayingAudio || this.audioQueue.length === 0) return;
     
-    const audioBuf = this.audioContext.createBuffer(1, float32.length, ClinicalSession.SAMPLE_RATE);
-    audioBuf.getChannelData(0).set(float32);
+    this.isPlayingAudio = true;
+    const audioUrl = this.audioQueue.shift()!;
+    const audio = new Audio(audioUrl);
+    this.currentAudioElement = audio;
     
-    const source = this.audioContext.createBufferSource();
-    source.buffer = audioBuf;
-    source.connect(this.audioContext.destination);
+    audio.play().catch(e => {
+      this.log(`Audio playback error: ${e}`, 'error');
+      this.isPlayingAudio = false;
+      this.currentAudioElement = null;
+      this.playNextAudio();
+    });
     
-    const now = this.audioContext.currentTime;
-    if (this.nextStartTime < now) this.nextStartTime = now + 0.05; // Reduced buffer from 0.1 to 0.05
-    const scheduledPlayTime = this.nextStartTime;
-    source.start(scheduledPlayTime);
-    this.nextStartTime += audioBuf.duration;
+    audio.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      this.isPlayingAudio = false;
+      this.currentAudioElement = null;
+      
+      // Display pending chat messages after audio finishes
+      if (this.pendingChatMessages.length > 0) {
+        this.log(`Displaying ${this.pendingChatMessages.length} pending chat messages after audio completed`);
+        this.callbacks.onChat?.(this.pendingChatMessages);
+        this.pendingChatMessages = [];
+      }
+      
+      this.playNextAudio();
+    };
   }
 
   async start(): Promise<void> {
@@ -170,19 +172,17 @@ export class ClinicalSession {
 
     this.isRunning = true;
     this.callbacks.onStatusChange?.('connecting');
-    await this.initAudio();
 
     return new Promise((resolve, reject) => {
-      // Connect to transcriber WebSocket (handles both transcription and simulation)
-      this.transcriberSocket = new WebSocket(TRANSCRIBER_URL);
-      this.transcriberSocket.binaryType = 'arraybuffer';
+      // Connect to single simulation WebSocket
+      this.socket = new WebSocket(SIMULATION_URL);
 
-      this.transcriberSocket.onopen = () => {
-        this.log('Transcriber connected - Initial Analysis Phase', 'success');
+      this.socket.onopen = () => {
+        this.log('Connected to simulation', 'success');
         this.callbacks.onStatusChange?.('connected');
         
         // Start session with patient data
-        this.transcriberSocket?.send(JSON.stringify({ 
+        this.socket?.send(JSON.stringify({ 
           type: 'start', 
           patient_id: this.patientId,
           gender: this.gender
@@ -191,18 +191,18 @@ export class ClinicalSession {
         resolve();
       };
 
-      this.transcriberSocket.onmessage = (event) => {
-        this.handleTranscriberMessage(event);
+      this.socket.onmessage = (event) => {
+        this.handleMessage(event);
       };
 
-      this.transcriberSocket.onerror = (error) => {
-        this.log('Transcriber error', 'error');
+      this.socket.onerror = (error) => {
+        this.log('WebSocket error', 'error');
         this.callbacks.onStatusChange?.('error');
         reject(error);
       };
 
-      this.transcriberSocket.onclose = () => {
-        this.log('Transcriber disconnected');
+      this.socket.onclose = () => {
+        this.log('WebSocket disconnected');
         if (this.isRunning) {
           this.callbacks.onStatusChange?.('disconnected');
         }
@@ -210,159 +210,97 @@ export class ClinicalSession {
     });
   }
 
-  private startSimulation() {
-    // Start simulation connection after initial analysis
-    this.simulationSocket = new WebSocket(SIMULATION_URL);
-    this.simulationSocket.binaryType = 'arraybuffer';
-
-    this.simulationSocket.onopen = () => {
-      this.log('Simulation connected - Streaming voice', 'success');
-      this.simulationSocket?.send(JSON.stringify({ 
-        type: 'start', 
-        patient_id: this.patientId,
-        gender: this.gender
-      }));
-    };
-
-    this.simulationSocket.onmessage = async (event) => {
-      await this.handleSimulationMessage(event);
-    };
-
-    this.simulationSocket.onerror = () => {
-      this.log('Simulation error', 'error');
-    };
-
-    this.simulationSocket.onclose = () => {
-      this.log('Simulation disconnected');
-    };
-  }
-
-  private handleTranscriberMessage(event: MessageEvent) {
+  private handleMessage(event: MessageEvent) {
     try {
-      const data = JSON.parse(event.data) as WebSocketMessage;
+      const data = JSON.parse(event.data) as any; // Use any to handle flexible backend response
+      
+      // Log raw data for debugging
+      console.log('[WebSocket] Received message:', data.type, data);
       
       switch (data.type) {
         case 'chat':
-          this.log(`Received ${data.data?.length || 0} chat messages`);
-          this.callbacks.onChat?.(data.data || []);
-          // Check if initial analysis is complete
-          if (data.source === 'initial_analysis' && !this.simulationSocket) {
-            this.log('Initial analysis complete, starting simulation');
-            this.startSimulation();
+          // Backend might send data.data, data.chat, data.messages, or data.questions
+          const chatMessages = data.data || data.chat || data.messages || data.questions || [];
+          this.log(`Received ${chatMessages.length} chat messages`);
+          console.log('[WebSocket] Chat messages:', chatMessages);
+          
+          // If audio is currently playing, queue the messages to display after audio finishes
+          if (this.isPlayingAudio) {
+            this.log('Audio is playing, queuing chat messages for after playback');
+            this.pendingChatMessages = chatMessages;
+          } else {
+            // No audio playing, display immediately
+            this.callbacks.onChat?.(chatMessages);
           }
           break;
           
         case 'diagnosis':
           this.log(`Received ${data.diagnosis?.length || 0} diagnoses`);
           this.callbacks.onDiagnoses?.(data.diagnosis || []);
-          if (data.source === 'initial_analysis' && !this.simulationSocket) {
-            this.log('Initial analysis complete, starting simulation');
-            this.startSimulation();
-          }
           break;
           
         case 'questions':
           this.log(`Received ${data.questions?.length || 0} questions`);
           this.callbacks.onQuestions?.(data.questions || []);
-          if (data.source === 'initial_analysis' && !this.simulationSocket) {
-            this.log('Initial analysis complete, starting simulation');
-            this.startSimulation();
-          }
           break;
 
         case 'education':
           this.log(`Received ${data.data?.length || 0} education items`);
           this.callbacks.onEducation?.(data.data || []);
-          if (data.source === 'initial_analysis' && !this.simulationSocket) {
-            this.log('Initial analysis complete, starting simulation');
-            this.startSimulation();
-          }
           break;
 
         case 'analytics':
           this.log('Received analytics data');
           this.callbacks.onAnalytics?.(data.data);
-          if (data.source === 'initial_analysis' && !this.simulationSocket) {
-            this.log('Initial analysis complete, starting simulation');
-            this.startSimulation();
-          }
           break;
 
         case 'checklist':
           this.log(`Received ${data.data?.length || 0} checklist items`);
           this.callbacks.onChecklist?.(data.data || []);
-          if (data.source === 'initial_analysis' && !this.simulationSocket) {
-            this.log('Initial analysis complete, starting simulation');
-            this.startSimulation();
-          }
           break;
 
         case 'status':
           this.callbacks.onStatus?.(data.data);
-          if (data.source === 'initial_analysis' && !this.simulationSocket) {
-            this.log('Initial analysis complete, starting simulation');
-            this.startSimulation();
-          }
           break;
 
         case 'report':
           this.log('Received report data');
           this.callbacks.onReport?.(data.data);
-          if (data.source === 'initial_analysis' && !this.simulationSocket) {
-            this.log('Initial analysis complete, starting simulation');
-            this.startSimulation();
-          }
           break;
 
         case 'audio':
-          // Audio messages don't have source field, ignore
+          this.handleAudioPacket(data);
+          this.callbacks.onAudio?.(data.data);
           break;
-          
+
         default:
           this.log(`Unknown message type: ${(data as any).type}`);
       }
     } catch (error) {
-      // Not JSON, might be audio data - ignore
-    }
-  }
-
-  private async handleSimulationMessage(event: MessageEvent) {
-    // Handle JSON messages
-    try {
-      const data = JSON.parse(event.data);
-      
-      if (data.type === 'audio' && data.data) {
-        // Base64 encoded audio
-        const buffer = this.base64ToBuffer(data.data);
-        this.playAndRelayAudio(buffer);
-        this.callbacks.onAudio?.(data.data);
-        return;
-      }
-
-      // Log other messages
-      this.log(`[Sim] ${data.type}`);
-    } catch (error) {
-      // Non-JSON message, ignore
+      this.log(`Error parsing message: ${error}`, 'error');
     }
   }
 
   stop() {
     this.isRunning = false;
     
-    if (this.transcriberSocket) {
-      this.transcriberSocket.close();
-      this.transcriberSocket = null;
+    if (this.socket) {
+      this.socket.close();
+      this.socket = null;
     }
     
-    if (this.simulationSocket) {
-      this.simulationSocket.close();
-      this.simulationSocket = null;
+    // Stop current audio playback
+    if (this.currentAudioElement) {
+      this.currentAudioElement.pause();
+      this.currentAudioElement = null;
     }
     
-    if (this.audioContext) {
-      this.audioContext.close();
-      this.audioContext = null;
-    }
+    // Clean up audio queue
+    this.audioQueue.forEach(url => URL.revokeObjectURL(url));
+    this.audioQueue = [];
+    this.currentAudioChunks = [];
+    this.isPlayingAudio = false;
+    this.pendingChatMessages = [];
     
     this.callbacks.onStatusChange?.('disconnected');
     this.log('Session stopped', 'success');
@@ -370,9 +308,5 @@ export class ClinicalSession {
 
   get running() {
     return this.isRunning;
-  }
-
-  get totalBytesTransferred() {
-    return this.bytesTotal;
   }
 }
