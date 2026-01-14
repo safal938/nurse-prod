@@ -1,7 +1,7 @@
 import { Diagnosis, Question, ChatMessage, EducationItem, AnalyticsData, ChecklistItem } from '../types';
 
 // WebSocket endpoints - use wss:// for secure connections
-const WS_BASE_URL = 'wss://clinic-hepa-v2-481780815788.europe-west1.run.app';
+const WS_BASE_URL = 'wss://clinic-hepa-v2-stable-481780815788.europe-west1.run.app';
 const SIMULATION_URL = `${WS_BASE_URL}/ws/simulation/audio`;
 
 // Message types from backend
