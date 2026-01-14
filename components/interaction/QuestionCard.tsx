@@ -18,16 +18,9 @@ interface QuestionCardProps {
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({ data, isHighlighted = false }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
   
   const isAnswered = data.status === 'answered';
   const isUrgent = data.status === 'urgent';
-
-  // Mark as animated after first render
-  React.useEffect(() => {
-    const timer = setTimeout(() => setHasAnimated(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   const containerClasses = (isUrgent && !isAnswered)
     ? "bg-red-50 border-red-200 shadow-[0_0_0_1px_rgba(254,202,202,0.4)]"
@@ -37,17 +30,14 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ data, isHighlighted 
 
   return (
     <motion.div 
-      layout={hasAnimated}
-      layoutId={`question-${data.id}`}
-      initial={false}
-      animate={{ 
-        opacity: 1, 
-        scale: isHighlighted ? 1.02 : 1, 
-        y: 0,
-        boxShadow: isHighlighted ? '0 0 0 2px rgba(14, 165, 233, 0.5)' : 'none'
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ 
+        layout: { duration: 0.3, ease: "easeInOut" },
+        opacity: { duration: 0.2 }
       }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      transition={hasAnimated ? { type: "spring", stiffness: 500, damping: 30 } : { duration: 0 }}
       onClick={() => setIsOpen(!isOpen)}
       className={`rounded-xl ${
                 isAnswered ? 'p-1.5' : 'p-2'

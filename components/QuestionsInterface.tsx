@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Circle } from 'lucide-react';
 import { QuestionCard, QuestionCardData } from './interaction/QuestionCard';
 import { Question } from '../types';
@@ -24,12 +24,6 @@ const mapQuestionToCardData = (q: Question): QuestionCardData => {
 export const QuestionsInterface: React.FC<{ questions?: Question[] }> = ({ questions: externalQuestions = [] }) => {
   // Start with empty array, only use backend data when it arrives
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Track mount state to disable initial animations
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   // Update when external questions change
   useEffect(() => {
@@ -65,36 +59,24 @@ export const QuestionsInterface: React.FC<{ questions?: Question[] }> = ({ quest
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {/* Urgent Questions - Full Width */}
           {urgentQuestions.length > 0 && (
-            <div className="space-y-3 mb-4">
-              {isMounted ? (
-                <AnimatePresence mode="popLayout">
-                  {urgentQuestions.map((q) => (
-                    <QuestionCard key={q.id} data={q} />
-                  ))}
-                </AnimatePresence>
-              ) : (
-                urgentQuestions.map((q) => (
+            <AnimatePresence mode="popLayout">
+              <div className="space-y-3 mb-4">
+                {urgentQuestions.map((q) => (
                   <QuestionCard key={q.id} data={q} />
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            </AnimatePresence>
           )}
 
           {/* Regular Pending Questions - 2 Column Grid */}
           {regularPendingQuestions.length > 0 && (
-            <div className="grid grid-cols-2 gap-3">
-              {isMounted ? (
-                <AnimatePresence mode="popLayout">
-                  {regularPendingQuestions.map((q) => (
-                    <QuestionCard key={q.id} data={q} />
-                  ))}
-                </AnimatePresence>
-              ) : (
-                regularPendingQuestions.map((q) => (
+            <AnimatePresence mode="popLayout">
+              <div className="grid grid-cols-2 gap-3">
+                {regularPendingQuestions.map((q) => (
                   <QuestionCard key={q.id} data={q} />
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            </AnimatePresence>
           )}
 
           {unansweredQuestions.length === 0 && (
@@ -123,17 +105,11 @@ export const QuestionsInterface: React.FC<{ questions?: Question[] }> = ({ quest
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {isMounted ? (
-            <AnimatePresence mode="popLayout">
-              {answeredQuestions.map((q) => (
-                <QuestionCard key={q.id} data={q} />
-              ))}
-            </AnimatePresence>
-          ) : (
-            answeredQuestions.map((q) => (
+          <AnimatePresence mode="popLayout">
+            {answeredQuestions.map((q) => (
               <QuestionCard key={q.id} data={q} />
-            ))
-          )}
+            ))}
+          </AnimatePresence>
 
           {answeredQuestions.length === 0 && (
             <div className="flex items-center justify-center h-full text-center py-12">
@@ -145,8 +121,6 @@ export const QuestionsInterface: React.FC<{ questions?: Question[] }> = ({ quest
             </div>
           )}
         </div>
-
-        
       </div>
     </div>
   );

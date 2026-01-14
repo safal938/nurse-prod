@@ -56,11 +56,19 @@ export const PatientInfo: React.FC<PatientInfoProps> = ({ patient }) => {
   const [activeTab, setActiveTab] = useState<'summary' | 'referral' | 'history' | 'chat' | 'contact'>('summary');
   const [documents] = useState(patientInfoData.documents);
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   
   const selectedDoc = selectedIndex !== null ? documents[selectedIndex] : null;
   
   // Use chat data from patient or fallback to pre_consultation_chat.json
   const chatHistory = patient.pre_consultation?.chat || [];
+
+  // Reset scroll position when tab changes
+  React.useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
+  }, [activeTab]);
 
   const handleNext = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -179,7 +187,7 @@ export const PatientInfo: React.FC<PatientInfoProps> = ({ patient }) => {
         </div>
 
         {/* Tab Content */}
-        <div className="flex-1 overflow-y-auto px-2">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-2">
           {activeTab === 'summary' && <SummaryTab />}
           
           {activeTab === 'referral' && <ReferralTab onDocumentClick={setSelectedIndex} />}

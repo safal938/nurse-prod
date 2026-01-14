@@ -89,7 +89,7 @@ export const PatientEducationInterface: React.FC<{ educationItems?: EducationIte
     }
   }, [externalItems]);
 
-  const pendingItems = items.filter(item => item.status === 'pending');
+  const pendingItems = items.filter(item => item.status === 'pending' || item.status === null);
   const deliveredItems = items.filter(item => item.status === 'asked');
   const highPriorityItems = pendingItems.filter(item => item.urgency === 'High');
   const otherPendingItems = pendingItems.filter(item => item.urgency !== 'High');
