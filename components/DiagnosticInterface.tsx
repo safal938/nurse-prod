@@ -16,10 +16,12 @@ export const DiagnosticInterface: React.FC<{ diagnoses?: Diagnosis[] }> = ({ dia
   // Update diagnoses when external data changes
   useEffect(() => {
     if (externalDiagnoses.length > 0) {
-      setDiagnoses(externalDiagnoses);
+      // Sort diagnoses by rank (ascending - rank 1 is most likely)
+      const sortedDiagnoses = [...externalDiagnoses].sort((a, b) => a.rank - b.rank);
+      setDiagnoses(sortedDiagnoses);
       // Auto-select first diagnosis if none selected or current selection not in new list
-      if (!selectedDiagnosis || !externalDiagnoses.find(d => d.did === selectedDiagnosis.did)) {
-        setSelectedDiagnosis(externalDiagnoses[0]);
+      if (!selectedDiagnosis || !sortedDiagnoses.find(d => d.did === selectedDiagnosis.did)) {
+        setSelectedDiagnosis(sortedDiagnoses[0]);
       }
     }
   }, [externalDiagnoses, selectedDiagnosis]);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Circle, ChevronDown, Info } from 'lucide-react';
 import { EducationItem } from '../types';
 
@@ -19,7 +20,15 @@ const EducationCard: React.FC<EducationCardProps> = ({ item }) => {
   const innerCardClasses = (isHighUrgency && !isDelivered) ? "border-red-100 shadow-sm" : "border-neutral-100 shadow-sm";
   
   return (
-    <div
+    <motion.div
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ 
+        layout: { duration: 0.3, ease: "easeInOut" },
+        opacity: { duration: 0.2 }
+      }}
       onClick={() => setIsOpen(!isOpen)}
       className={`rounded-xl p-2 border cursor-pointer group select-none relative overflow-hidden ${containerClasses}`}
     >
@@ -74,7 +83,7 @@ const EducationCard: React.FC<EducationCardProps> = ({ item }) => {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
@@ -110,20 +119,24 @@ export const PatientEducationInterface: React.FC<{ educationItems?: EducationIte
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {/* High Urgency Items - Full Width */}
           {highPriorityItems.length > 0 && (
-            <div className="space-y-3 mb-4">
-              {highPriorityItems.map((item, index) => (
-                <EducationCard key={`${item.headline}-${index}`} item={item} />
-              ))}
-            </div>
+            <AnimatePresence mode="popLayout">
+              <div className="space-y-3 mb-4">
+                {highPriorityItems.map((item, index) => (
+                  <EducationCard key={`${item.headline}-${index}`} item={item} />
+                ))}
+              </div>
+            </AnimatePresence>
           )}
 
           {/* Other Pending Items - 2 Column Grid */}
           {otherPendingItems.length > 0 && (
-            <div className="grid grid-cols-2 gap-3">
-              {otherPendingItems.map((item, index) => (
-                <EducationCard key={`${item.headline}-${index}`} item={item} />
-              ))}
-            </div>
+            <AnimatePresence mode="popLayout">
+              <div className="grid grid-cols-2 gap-3">
+                {otherPendingItems.map((item, index) => (
+                  <EducationCard key={`${item.headline}-${index}`} item={item} />
+                ))}
+              </div>
+            </AnimatePresence>
           )}
 
           {pendingItems.length === 0 && (
@@ -150,9 +163,11 @@ export const PatientEducationInterface: React.FC<{ educationItems?: EducationIte
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {deliveredItems.map((item, index) => (
-            <EducationCard key={`${item.headline}-${index}`} item={item} />
-          ))}
+          <AnimatePresence mode="popLayout">
+            {deliveredItems.map((item, index) => (
+              <EducationCard key={`${item.headline}-${index}`} item={item} />
+            ))}
+          </AnimatePresence>
 
           {deliveredItems.length === 0 && (
             <div className="flex items-center justify-center h-full text-center py-12">
