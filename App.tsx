@@ -6,6 +6,7 @@ import { PatientCard } from './components/PatientCard';
 import { Pagination } from './components/Pagination';
 import { ConsultationPage } from './components/ConsultationPage';
 import { ConsultationPageShowcase } from './components/ConsultationPageShowcase';
+import { RealtimePage } from './components/RealtimePage';
 import { MOCK_PATIENTS } from './constants';
 import { Patient } from './types';
 
@@ -45,6 +46,11 @@ const PatientListPage: React.FC = () => {
     navigate(`/consultation/${patient.id}`);
   };
 
+  const handleRealtimeConsultation = (patient: Patient, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    navigate(`/realtime/${patient.id}`);
+  };
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -79,6 +85,7 @@ const PatientListPage: React.FC = () => {
                 key={patient.id}
                 patient={patient}
                 onClick={handlePatientSelect}
+                onRealtimeClick={handleRealtimeConsultation}
               />
             ))
           ) : (
@@ -143,12 +150,39 @@ const ConsultationShowcaseWrapper: React.FC = () => {
   return <ConsultationPageShowcase onBack={() => navigate('/')} />;
 };
 
+// Realtime Consultation Wrapper (Voice Input)
+const RealtimeConsultationWrapper: React.FC = () => {
+  const { patientId } = useParams<{ patientId: string }>();
+  const navigate = useNavigate();
+
+  const patient = MOCK_PATIENTS.find((p) => p.id === patientId);
+
+  if (!patient) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-100">
+        <div className="text-center">
+          <p className="text-neutral-600 mb-4">Patient not found</p>
+          <button
+            onClick={() => navigate('/')}
+            className="px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition-colors"
+          >
+            Back to Patient List
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return <RealtimePage patient={patient} onBack={() => navigate('/')} />;
+};
+
 const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<PatientListPage />} />
       <Route path="/consultation/:patientId" element={<ConsultationPageWrapper />} />
       <Route path="/consultation-showcase" element={<ConsultationShowcaseWrapper />} />
+      <Route path="/realtime/:patientId" element={<RealtimeConsultationWrapper />} />
     </Routes>
   );
 };

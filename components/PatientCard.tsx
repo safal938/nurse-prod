@@ -1,13 +1,14 @@
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Mic } from 'lucide-react';
 import { Patient, PatientStatus } from '../types';
 
 interface PatientCardProps {
   patient: Patient;
   onClick: (patient: Patient) => void;
+  onRealtimeClick?: (patient: Patient, e: React.MouseEvent) => void;
 }
 
-export const PatientCard: React.FC<PatientCardProps> = ({ patient, onClick }) => {
+export const PatientCard: React.FC<PatientCardProps> = ({ patient, onClick, onRealtimeClick }) => {
   
   const getStatusStyles = (status: PatientStatus) => {
     switch (status) {
@@ -57,7 +58,19 @@ export const PatientCard: React.FC<PatientCardProps> = ({ patient, onClick }) =>
      
      <div className="flex justify-between items-center text-xs text-neutral-400 border-t border-neutral-50 pt-3">
         <span>Updated {patient.lastUpdate}</span>
-        <ChevronRight size={16} className="text-primary opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0"/>
+        <div className="flex items-center gap-2">
+          {onRealtimeClick && (
+            <button
+              onClick={(e) => onRealtimeClick(patient, e)}
+              className="flex items-center gap-1 px-2 py-1 bg-cyan-50 text-cyan-600 rounded hover:bg-cyan-100 transition-colors opacity-0 group-hover:opacity-100"
+              title="Start Voice Consultation"
+            >
+              <Mic size={12} />
+              <span className="text-[10px] font-medium">Voice</span>
+            </button>
+          )}
+          <ChevronRight size={16} className="text-primary opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0"/>
+        </div>
      </div>
     </div>
   );
